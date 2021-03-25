@@ -3,38 +3,6 @@
 #include <iostream>
 
 
-Vector3::Vector3(float x, float y, float z): from(Point3(0, 0, 0)), to(Point3(x, y, z)) {
-    this->x = x;
-    this->y = y;
-    this->z = z;
-}
-
-Vector3::Vector3(Point3 from, Point3 to): from(from), to(to) {
-    Vector3 dif = to - from;
-
-    this->x = dif.x;
-    this->y = dif.y;
-    this->z = dif.z;
-}
-
-inline Vector3 Vector3::reverse() { return Vector3(-x, -y, -z); }
-
-inline Vector3 Vector3::operator+=(const Vector3 &v) {
-    return Vector3(x + v.x, y + v.y, z + v.z);
-}
-
-inline Vector3 Vector3::operator*=(const float factor) {
-    return Vector3(x*factor, y*factor, z*factor);
-}
-
-inline float Vector3::length() {
-    return sqrt(length_squared());
-}
-
-inline float Vector3::length_squared() {
-    return x*x + y*y + z*z;
-}
-
 // inline Vector3 operator+(const Vector3 &u, const Vector3 &v) {
 //     return Vector3(u.x + v.x, u.y + v.y, u.z + v.z);
 // }

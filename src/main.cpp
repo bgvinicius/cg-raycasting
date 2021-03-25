@@ -76,7 +76,7 @@ float interceptsPlane(Ray &ray) {
     // return dot(test, planeNormal) == 0;
 }
 
-int main() {
+void render() {
     const auto eye = Point3(0, 0, 0);
 
     // const auto canvas_top_left = Point3(0, 2, -1);
@@ -157,4 +157,8 @@ int main() {
             }
         }
     }
+}
+
+int main() {
+    cout << "pode usar a main agora amanda \n";
 }

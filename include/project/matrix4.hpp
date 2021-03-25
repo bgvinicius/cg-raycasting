@@ -134,7 +134,31 @@ Matrix4 operator*(Matrix4 &u, Matrix4 &v) {
    return resultado;
 }
 
+Point3 operator*(Matrix4 &u, Point3 &p){
+    return Point3
+    (u.index[0][0]*p.x + u.index[0][1]*p.y + u.index[0][2]*p.z + u.index[0][3],
+    u.index[1][0]*p.x + u.index[1][1]*p.y + u.index[1][2]*p.z + u.index[1][3],
+    u.index[2][0]*p.x + u.index[2][1]*p.y + u.index[2][2]*p.z + u.index[2][3]);
+
+
+}
+Point3 operator*(Point3 &p, Matrix4 &u){
+    return Point3
+    (u.index[0][0]*p.x + u.index[0][1]*p.y + u.index[0][2]*p.z + u.index[0][3],
+    u.index[1][0]*p.x + u.index[1][1]*p.y + u.index[1][2]*p.z + u.index[1][3],
+    u.index[2][0]*p.x + u.index[2][1]*p.y + u.index[2][2]*p.z + u.index[2][3]);
+
+
+}
+
 Vector3 operator*(Matrix4 &u, Vector3 &v) {
+    return Vector3(u.index[0][0]*v.x + u.index[0][1]*v.y + u.index[0][2]*v.z,
+    u.index[1][0]*v.x + u.index[1][1]*v.y + u.index[1][2]*v.z,
+    u.index[2][0]*v.x + u.index[2][1]*v.y + u.index[2][2]*v.z);
+
+}
+
+Vector3 operator*(Vector3 &v, Matrix4 &u) {
     return Vector3(u.index[0][0]*v.x + u.index[0][1]*v.y + u.index[0][2]*v.z,
     u.index[1][0]*v.x + u.index[1][1]*v.y + u.index[1][2]*v.z,
     u.index[2][0]*v.x + u.index[2][1]*v.y + u.index[2][2]*v.z);

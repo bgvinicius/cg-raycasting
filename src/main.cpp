@@ -33,7 +33,31 @@ float computeLighting(Vector3 &normal, Vector3 &pixelToEye, int s) {
     return i;
 }
 
-bool interceptsPlane(Ray &ray) {
+float computeLightingFloor(Vector3 &normal, Vector3 &pixelToEye, int s) {
+    float i = 0.5;
+
+    Vector3 lightD(1, 1, 1);
+    float n_dot_l = dot(normal, lightD);
+
+    if (n_dot_l > 0) {
+        //cerr << "aq";
+        i += 0.8 * (n_dot_l / (normal.length() * lightD.length()));
+    }
+
+    Vector3 R = ((2.0 * normal) * dot(normal, lightD)) - lightD;
+    float rdotv = dot(R, pixelToEye);
+
+    if (rdotv > 0) {
+        i += 0.8 * pow(rdotv / (R.length() * pixelToEye.length()), s);
+    }
+
+
+    //cerr << i << "\n";
+    return i;
+}
+
+
+float interceptsPlane(Ray &ray) {
     Point3 planePoint(0, -4, 0);
     Vector3 planeNormal(0, 1, 0);
 
@@ -42,13 +66,14 @@ bool interceptsPlane(Ray &ray) {
 
     //return false;
 
-    if (den == 0 || (numer / den) <= 0) {
-        return false;
+    if (den == 0 || (numer / den) <= 1) {
+        return -1.0;
     }
 
-    Point3 interpoint = ray.pointAt(numer / den);
-    Vector3 test = interpoint - planePoint;
-    return dot(test, planeNormal) == 0;
+    return numer / den;
+    // Point3 interpoint = ray.pointAt(numer / den);
+    // Vector3 test = interpoint - planePoint;
+    // return dot(test, planeNormal) == 0;
 }
 
 int main() {
@@ -117,12 +142,18 @@ int main() {
             }
 
             if (!didIntersect) {
-                write_color(std::cout, 255, 255, 255);
-                // if (interceptsPlane(raio)) {
-                //     write_color(std::cout, 0, 200, 100);
-                // } else {
-                //     write_color(std::cout, 255, 255, 255);
-                // }
+                float interceptPos = interceptsPlane(raio);
+                if (interceptPos >= 0) {
+                    //Point3 p = raio.pointAt(interceptPos);
+                    Vector3 inter = Vector3(0, 1, 0);
+                    //Vector3 interToEye = direction.reverse();
+                    Vector3 b = direction * -1;
+                    float light = computeLightingFloor(inter, b, 1.1);
+
+                    write_color(std::cout, 0, 200 * light, 100 * light);
+                } else {
+                    write_color(std::cout, 255, 255, 255);
+                }
             }
         }
     }

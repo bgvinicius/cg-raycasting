@@ -74,9 +74,9 @@ inline Vector3 operator/(Vector3 v, float t) {
 }
 
 inline float dot(const Vector3 &u, const Vector3 &v) {
-    return u.x * v.x
-         + u.y * v.y
-         + u.z * v.z;
+    return (u.x * v.x)
+         + (u.y * v.y)
+         + (u.z * v.z);
 }
 
 inline Vector3 cross(const Vector3 &u, const Vector3 &v) {

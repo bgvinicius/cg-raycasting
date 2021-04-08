@@ -8,6 +8,10 @@
 
 class Vector3 {
     public: 
+
+        Point3 from, to;
+        float x, y, z;
+
         Vector3(float x, float y, float z): from(Point3(0, 0, 0)), to(Point3(x, y, z)) {
             this->x = x;
             this->y = y;
@@ -18,9 +22,6 @@ class Vector3 {
             this->y = from.y - to.y;
             this->z = from.z - to.z;
         }
-
-        Point3 from, to;
-        float x, y, z;
 
         // produces a new vector with reverse direction
         Vector3 reverse() { return Vector3(-x, -y, -z); }
@@ -90,4 +91,8 @@ inline Vector3 unit_vector(Vector3 v) {
 }
 
 // inline Vector3 operator*(const Vector3 &u, const Vector3 &v);
+
+inline std::ostream& operator<<(std::ostream &out, Vector3 &v) {
+    return out << '(' << v.x << ' ' << v.y << ' ' << v.z << ')';
+}
 #endif

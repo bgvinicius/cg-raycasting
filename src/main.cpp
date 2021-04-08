@@ -3,6 +3,7 @@
 #include "project/sphere.hpp"
 #include <vector>
 #include <math.h>
+#include "project/camera.hpp"
 
 using namespace std;
 
@@ -16,8 +17,12 @@ void write_color(std::ostream &out, float r, float g, float b) {
 class TriangleFace {
     public:
         Point3 v1, v2, v3;
+        Point3 rgb;
 
-        TriangleFace(): v1(Point3(0, 0, 0)), v2(Point3(0, 0, 0)), v3(Point3(0, 0, 0)) {}
+        TriangleFace(): v1(Point3(0, 0, 0)), v2(Point3(0, 0, 0)), v3(Point3(0, 0, 0)), rgb(Point3(0, 0, 0)) {
+
+        }
+        TriangleFace(Point3 v1, Point3 v2, Point3 v3, Point3 rgb): v1(v1), v2(v2), v3(v3), rgb(rgb) {}
 
         // void show() {
         //     cout << "v1: " << v1 << " v2: " << v2 << " v3: " << v3 << "\n";
@@ -278,7 +283,50 @@ int interceptTriangles(Ray &ray, vector<TriangleFace> &triangles) {
 }
 
 void render(vector<TriangleFace> &triangles) {
-    const auto eye = Point3(0, 0, 0);
+    Point3 eye = Point3(22, 5, -8);
+    Point3 at = Point3(16, 0, -11);
+    Point3 up = Point3(16, 1, -11);
+
+    Camera c = Camera(eye, at, up);
+
+    int cube_xmin = 14;
+    int cube_xmax = 20;
+    int cube_ymin = 0;
+    int cube_ymax = 4;
+    int cube_zmin = -11;
+    int cube_zmax = -15;
+
+    vector<TriangleFace> tr = {
+        TriangleFace(Point3(cube_xmin, cube_ymin, cube_zmin), Point3(cube_xmax, cube_ymin, cube_zmin), Point3(cube_xmin, cube_ymax, cube_zmin), Point3(1, 1, 211)), // frente
+        TriangleFace(Point3(cube_xmin, cube_ymax, cube_zmin), Point3(cube_xmax, cube_ymin, cube_zmin), Point3(cube_xmax, cube_ymax, cube_zmin), Point3(1, 1, 211)), // frente
+        TriangleFace(Point3(cube_xmin, cube_ymin, cube_zmin), Point3(cube_xmin, cube_ymax, cube_zmax), Point3(cube_xmin, cube_ymin, cube_zmax), Point3(111, 51, 1)), // lado esquerdo
+        TriangleFace(Point3(cube_xmin, cube_ymin, cube_zmin), Point3(cube_xmin, cube_ymax, cube_zmin), Point3(cube_xmin, cube_ymax, cube_zmax), Point3(111, 51, 1)), // esq
+        TriangleFace(Point3(cube_xmax, cube_ymin, cube_zmin), Point3(cube_xmax, cube_ymin, cube_zmax), Point3(cube_xmax, cube_ymax, cube_zmin), Point3(211, 1, 1)), // dir
+        TriangleFace(Point3(cube_xmax, cube_ymax, cube_zmin), Point3(cube_xmax, cube_ymin, cube_zmax), Point3(cube_xmax, cube_ymax, cube_zmax), Point3(211, 1, 1)), // dir
+        TriangleFace(Point3(cube_xmin, cube_ymin, cube_zmax), Point3(cube_xmax, cube_ymin, cube_zmax), Point3(cube_xmin, cube_ymax, cube_zmax), Point3(211, 211, 211)), // tras
+        TriangleFace(Point3(cube_xmin, cube_ymax, cube_zmax), Point3(cube_xmax, cube_ymin, cube_zmax), Point3(cube_xmax, cube_ymax, cube_zmax), Point3(211, 211, 211)), // tras
+    };
+
+    vector<TriangleFace> newFaces = {};
+
+    for (int i =0; i < tr.size(); i++) {
+        TriangleFace f = tr[i];
+
+        TriangleFace f2 = TriangleFace();
+
+        f2.v1 = c.worldToCamera * f.v1;
+        f2.v2 = c.worldToCamera * f.v2;
+        f2.v3 = c.worldToCamera * f.v3;
+        f2.rgb.x = f.rgb.x;
+        f2.rgb.y = f.rgb.y;
+        f2.rgb.z = f.rgb.z;
+
+        newFaces.push_back(f2);
+    }
+
+    eye = Point3(0, 0, 0);
+
+    //eye = Point3(0, 0, 0);
 
     // const auto canvas_top_left = Point3(0, 2, -1);
     // const auto canvas_top_right = Point3(2, 2, -1);
@@ -299,7 +347,7 @@ void render(vector<TriangleFace> &triangles) {
     float delt_x = ((x_max - x_min) / width);
     float delt_y = ((y_max - y_min) / height);
 
-    std::cerr << "renderizando";
+    std::cerr << "renderizando...\n";
 
     vector<Sphere> esfs;
 
@@ -321,7 +369,11 @@ void render(vector<TriangleFace> &triangles) {
             float z_pos = -1.0;
 
             // raio saindo da camera (eye) indo ate o centro do pixel no canvas
-            Vector3 direction(x_pos, y_pos, z_pos);
+            //Vector3 direction(x_pos, y_pos, z_pos);
+
+            Point3 pix = Point3(x_pos, y_pos, z_pos);
+            Vector3 direction = pix - eye;
+
             Ray raio(eye, direction);
 
             bool didIntersect = false;
@@ -345,10 +397,12 @@ void render(vector<TriangleFace> &triangles) {
             if (!didIntersect) {
                 float coneinter = interceptsCone(raio);
                 //cerr << coneinter << "\n";
-                int triangulopegue = interceptTriangles(raio, triangles);
+                int triangulopegue = interceptTriangles(raio, newFaces);
                 if (triangulopegue != -1) {
+                    TriangleFace f = newFaces[triangulopegue];
                     //cerr << triangulopegue;
-                    write_color(std::cout, 10.0 * triangulopegue, 10.0 * triangulopegue, 10.0 * triangulopegue);
+
+                    write_color(std::cout, f.rgb.x, f.rgb.y, f.rgb.z);
                 } else {
                     float interceptPos = interceptsPlane(raio);
                     if (interceptPos >= 0) {
@@ -358,7 +412,7 @@ void render(vector<TriangleFace> &triangles) {
                         Vector3 b = direction * -1;
                         float light = computeLightingFloor(inter, b, 3, p, esfs, o);
 
-                        write_color(std::cout, 0, 200 * light, 100 * light);
+                        write_color(std::cout, 143, 103, 73);
                     } else {
                         write_color(std::cout, 255, 255, 255);
                     }

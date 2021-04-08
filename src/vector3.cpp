@@ -47,6 +47,6 @@
 //     return v / v.length();
 // }
 
-std::ostream& operator<<(std::ostream &out, const Vector3 &v) {
-    return out << '(' << v.x << ' ' << v.y << ' ' << v.y << ')';
-}
+// std::ostream& operator<<(std::ostream &out, const Vector3 &v) {
+//     return out << '(' << v.x << ' ' << v.y << ' ' << v.y << ')';
+// }

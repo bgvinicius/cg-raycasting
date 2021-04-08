@@ -7,7 +7,9 @@ using namespace std;
 class Matrix4 {
     public:
         vector<vector<float>> index {vector<float>{0, 0, 0, 0},  vector<float>{0, 0, 0, 0}, vector<float>{0, 0, 0, 0}, vector<float>{0, 0, 0, 0}};
-           
+
+        Matrix4() {};
+        Matrix4(vector<vector<float>> index): index(index) {};
 };
 
 Matrix4 identity() {

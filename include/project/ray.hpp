@@ -1,3 +1,6 @@
+#ifndef RAY_H
+#define RAY_H
+
 #include "point3.hpp"
 #include "vector3.hpp"
 
@@ -9,3 +12,5 @@ class Ray {
         Ray(Point3 origin, Vector3 direction);
         Point3 pointAt(float t);
 };
+
+#endif

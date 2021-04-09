@@ -1,9 +1,12 @@
 #include <iostream>
 #include "project/vector3.hpp"
-#include "project/sphere.hpp"
+#include "project/objects/sphere.hpp"
+#include "project/objects/cylinder.hpp"
+#include "project/objects/cone.hpp"
 #include <vector>
 #include <math.h>
 #include "project/camera.hpp"
+#include "project/object.hpp"
 
 using namespace std;
 
@@ -83,28 +86,16 @@ float computeLighting(Vector3 &normal, Vector3 &pixelToEye, int s) {
     return i;
 }
 
-bool doesIntercept(vector<Sphere> &esfs, int o, Ray &raio) {
-    for (int e = 0; e < o; e++) {
-        float interp = esfs[e].intersectColor(raio);
-
-        if (interp >= 0) {
-            return true;
-        }
-    }
-
-    return false;
-}
-
 float computeLightingFloor(Vector3 &normal, Vector3 &pixelToEye, int s, Point3 &pontoInter, vector<Sphere> &esfs, int nesfs) {
     float i = 0.5;
 
     Vector3 lightD(0, 1, 0);
 
-    Ray shadowRay = Ray(pontoInter, lightD);
-    if (doesIntercept(esfs, nesfs, shadowRay)) {
-        //cerr << "a";
-        return i;
-    }
+    //Ray shadowRay = Ray(pontoInter, lightD);
+    // if (doesIntercept(esfs, nesfs, shadowRay)) {
+    //     //cerr << "a";
+    //     return i;
+    // }
 
     float n_dot_l = dot(normal, lightD);
 
@@ -142,121 +133,6 @@ float interceptsPlane(Ray &ray) {
     return numer / den;
 }
 
-float interceptsCone(Ray &ray) {
-    // cone center point
-    Point3 C = Point3(0, 0, -3.0);
-    // cone top point
-    Point3 V = Point3(0, 0.0, -3.0);
-    Vector3 n = unit_vector(Vector3(1.0, 0.0, 0));
-    double H = 2.0;
-    double R = 1.0;
-
-    Point3 P0 = ray.origin;
-    Vector3 d = ray.direction;
-
-    Vector3 v = V - P0;
-
-    double hipotenusa = sqrt(pow(H, 2.0) + pow(R, 2.0));
-    double costeta = H / hipotenusa;
-    double cos2teta = pow(costeta, 2.0);
-
-    double a = pow(dot(d, n), 2.0) - (dot(d, d) * cos2teta);
-    double b = (dot(v, d) * cos2teta) - (dot(v, n) * dot(d, n));
-    double c = pow(dot(v, n), 2.0) - (dot(v, v)*cos2teta);
-
-    double discriminant = b*b -a*c;
-
-    if (discriminant <= 0) {
-        return -1.0;
-    }
-
-    if (a == 0) {
-        cerr << "a = 0";
-    }
-
-    auto t1 = (-1.0*b + sqrt(discriminant)) / (a);
-    auto t2 = (-1.0*b - sqrt(discriminant)) / (a);
-
-    if (t1 < 0 and t2 < 0) {
-        return -1.0;
-    }
-
-    Point3 p1 = ray.pointAt(t1);
-    Point3 p2 = ray.pointAt(t2);
-
-    Vector3 vt1 = V - p1;
-    Vector3 vt2 = V - p2;
-
-    float h1 = dot(vt1, n);
-    float h2 = dot(vt2, n);
-
-    if ((h1 >= 0) and (h1 <= H)) {
-        return 1.0;
-    }
-
-    if ((h2 >= 0) and (h2 <= H)) {
-        return 1.0;
-    }
-    //cerr << "t1 " << t1 << " t2 " << t2 <<"\n ";
-    return -1.0;
-}
-
-float interceptsCylinder(Ray &ray) {
-    // cylinder base point
-    Point3 B = Point3(0, 1, -3);
-
-    // cylinder direction vector -- unit vector
-    Vector3 u = unit_vector(Vector3(1, 1, 1));
-
-    // cylinder height and radius
-    float H = 1.0;
-    float R = 1.0;
-
-    // == auxiliary vectors to simplify the interception equation ==
-    
-    // ray direction
-    Vector3 d = ray.direction;
-
-    // ray origin
-    Point3 P_0 = ray.origin;
-
-    // v = (P0 - B) - ((P0 - B) dot u) * u
-    Vector3 v = (P_0 - B) - ((dot(P_0 - B, u) * u)); 
-
-    // w = d - (d dot u)*u
-    Vector3 w = d - ((dot(d, u)) * u);
-
-    // == quadratic equation ==
-
-    float a = dot(w, w);
-    float b = dot(v, w);
-    float c = dot(v, v) - pow(R, 2);
-
-    float discriminant = pow(b, 2) - (a*c);
-
-    if (discriminant < 0) return -1.0;
-
-    float t1 = (-b + sqrt(discriminant)) / a;
-    float t2 = (-b - sqrt(discriminant)) / a;
-
-    Point3 p1 = ray.pointAt(t1);
-    Point3 p2 = ray.pointAt(t2);
-
-    float h1 = dot(p1 - B, u);
-    float h2 = dot(p2 - B, u);
-
-    if (h1 >= 0 and h1 <= H) {
-        return 1.0;
-    }
-
-    
-    if (h2 >= 0 and h2 <= H) {
-        return 1.0;
-    }
-
-    return -1.0;
-}
-
 int interceptTriangles(Ray &ray, vector<TriangleFace> &triangles) {
     int n = triangles.size();
 
@@ -283,9 +159,9 @@ int interceptTriangles(Ray &ray, vector<TriangleFace> &triangles) {
 }
 
 void render(vector<TriangleFace> &triangles) {
-    Point3 eye = Point3(22, 5, -8);
-    Point3 at = Point3(16, 0, -11);
-    Point3 up = Point3(16, 1, -11);
+    Point3 eye = Point3(0, 0, 0);
+    Point3 at = Point3(0, 0, -1);
+    Point3 up = Point3(0, 1, -1);
 
     Camera c = Camera(eye, at, up);
 
@@ -349,17 +225,28 @@ void render(vector<TriangleFace> &triangles) {
 
     std::cerr << "renderizando...\n";
 
-    vector<Sphere> esfs;
+    vector<Object*> esfs;
 
     vector<int> color {100, 150, 200, 30};
     vector<int> shine {10, 30, 40, 50};
 
-    esfs.push_back(Sphere(Point3(0.0, 0.0, -2.0), 0.5));
-    esfs.push_back(Sphere(Point3(1.0, 0.0, -2.5), 0.5));
-    esfs.push_back(Sphere(Point3(2.0, 1.5, -3.5), 1));
-    esfs.push_back(Sphere(Point3(4.0, 1.5, -8), 3));
 
-    int o = 0;
+    Sphere esf1 = Sphere(Point3(0.0, 0.0, -1.0), 0.5);
+    Sphere esf2 = Sphere(Point3(1.0, 0.0, -1.5), 0.5);
+    Sphere esf3 = Sphere(Point3(2.0, 1.5, -2.5), 1);
+    Sphere esf4 = Sphere(Point3(4.0, 1.5, -7), 3);
+    Cylinder cil1 = Cylinder(Point3(-4, 0, -2.0), 1.0f, 1.0f, Vector3(0, 1, 0));
+
+    Cone cone1 = Cone(Point3(0, -3, -3.0), Vector3(0, 1.0, 0), 2.0, 1.0);
+    
+    esfs.push_back(&esf1);
+    esfs.push_back(&esf2);
+    esfs.push_back(&esf3);
+    esfs.push_back(&esf4);
+    esfs.push_back(&cil1);
+    esfs.push_back(&cone1);
+
+    int o = esfs.size();
 
     for (int h = height, i = 0; h >= 0; h--, i++) {
         for (int w = 0; w < width; w++) {
@@ -372,51 +259,27 @@ void render(vector<TriangleFace> &triangles) {
             //Vector3 direction(x_pos, y_pos, z_pos);
 
             Point3 pix = Point3(x_pos, y_pos, z_pos);
-            Vector3 direction = pix - eye;
+            Vector3 direction = Vector3(x_pos, y_pos, z_pos); //  pix - eye;
 
             Ray raio(eye, direction);
 
             bool didIntersect = false;
+            InterceptionInfo interception(raio);
             for (int e = 0; e < o; e++) {
-                float interp = esfs[e].intersectColor(raio);
-
-                if (interp >= 0) {
-                    Point3 p = raio.pointAt(interp);
-
-                    Vector3 inter = unit_vector(p - esfs[e].center);
-                    //Vector3 interToEye = direction.reverse();
-                    Vector3 b = direction * -1;
-                    float light = computeLighting(inter, b, shine[e]);
-
-                    write_color(std::cout, e * 80 * light, e * 50 * light, color[e] * light);
-                    didIntersect = true;
-                    break;
-                }
+                esfs[e]->intercepts(raio, interception);
             }
 
-            if (!didIntersect) {
-                float coneinter = interceptsCone(raio);
-                //cerr << coneinter << "\n";
-                int triangulopegue = interceptTriangles(raio, newFaces);
-                if (triangulopegue != -1) {
-                    TriangleFace f = newFaces[triangulopegue];
-                    //cerr << triangulopegue;
+            if (interception.valid) {
+                Point3 hitPoint = interception.getHitPoint();
+                //Vector3 normal = interception.hitObject->normalAt(hitPoint);
+                //Vector3 interToEye = direction.reverse();
+                Vector3 b = direction * -1;
+                //float light = computeLighting(normal, b, 500);
 
-                    write_color(std::cout, f.rgb.x, f.rgb.y, f.rgb.z);
-                } else {
-                    float interceptPos = interceptsPlane(raio);
-                    if (interceptPos >= 0) {
-                        Point3 p = raio.pointAt(interceptPos);
-                        Vector3 inter = Vector3(0, 1, 0);
-                        //Vector3 interToEye = direction.reverse();
-                        Vector3 b = direction * -1;
-                        float light = computeLightingFloor(inter, b, 3, p, esfs, o);
-
-                        write_color(std::cout, 143, 103, 73);
-                    } else {
-                        write_color(std::cout, 255, 255, 255);
-                    }
-                }
+                write_color(std::cout, 80, 50, 200);
+                didIntersect = true;
+            } else {
+                write_color(std::cout, 255, 255, 255);
             }
         }
     }

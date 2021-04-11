@@ -7,18 +7,23 @@ class Cone: public Object {
         Vector3 direction;
         float height;
         float baseRadius;
+        float costeta;
+        float cos2teta;
 
         Cone(Point3 top, Vector3 direction, float height, float baseRadius, Material material): 
             Object(material), top(top), direction(direction) {
             this->height = height;
             this->baseRadius = baseRadius;
+            double H = height; //2.0;
+            double R = baseRadius;// 1.0;
+            double hipotenusa = sqrt(pow(H, 2.0) + pow(R, 2.0));
+            this->costeta = H / hipotenusa;
+            this->cos2teta = pow(costeta, 2.0);
         }
 
         void intercepts(Ray &ray, InterceptionInfo &info) {
-            // cone center point
-            Point3 C = Point3(0, 0, -3.0);
             // cone top point
-            Point3 V = top; Point3(0, 5.0, -3.0);
+            Point3 V = top; 
             Vector3 n = direction; //unit_vector(Vector3(0.0, 1.0, 0));
             double H = height; //2.0;
             double R = baseRadius;// 1.0;
@@ -78,6 +83,10 @@ class Cone: public Object {
 
         Vector3 normalAt(Point3 &point) {
             // normal at given interception point?
-            return unit_vector(Vector3(0, 1, 0));
+            Vector3 u = unit_vector(top - point);
+
+            Vector3 N = direction - (costeta * u);
+
+            return unit_vector(N);
         };
 };

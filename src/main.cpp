@@ -174,9 +174,9 @@ void render(vector<TriangleFace> &triangles) {
     int o = esfs.size();
 
 
-    AmbientLight ambientLight = AmbientLight(0.3);
+    AmbientLight ambientLight = AmbientLight(0.1);
 
-    PointLight pointLight = PointLight(Point3(0, 1, 0), Component(255, 255, 255), Component(255, 255, 255));
+    PointLight pointLight = PointLight(Point3(0, 10, 10), reflectionFromRGB(255, 255, 255), reflectionFromRGB(255, 255, 255));
     vector<Light*> lights = {
         &ambientLight,
         &pointLight
@@ -211,6 +211,10 @@ void render(vector<TriangleFace> &triangles) {
 
                 //Material m = interception.hitObject->material;
 
+                // if (finalColor.r > 1 or finalColor.g > 1 or finalColor.b > 1) {
+                //     cerr << "ops";
+                // }
+
                 write_color(std::cout, finalColor.r * 255, finalColor.g * 255, finalColor.b * 255);
             } else {
                 write_color(std::cout, 255, 255, 255);
@@ -221,42 +225,42 @@ void render(vector<TriangleFace> &triangles) {
 
 int main() {
 
-    for (int i = 0; i < 4; i++) {
-        string t;
-        getline(cin, t);
-        //cin >> t;
+//     for (int i = 0; i < 4; i++) {
+//         string t;
+//         getline(cin, t);
+//         //cin >> t;
 
-        //cout << t << "\n";
-    }
+//         //cout << t << "\n";
+//     }
 
-    vector <Point3> mycube;
+//     vector <Point3> mycube;
 
-    for (int i = 0; i < 24; i++) {
-        string v;
-        Point3 tp(0, 0, 0);
+//     for (int i = 0; i < 24; i++) {
+//         string v;
+//         Point3 tp(0, 0, 0);
     
-        cin >> v;
-        if (v.compare("v") == 0) {
-            cin >> tp.x >> tp.y >> tp.z;
+//         cin >> v;
+//         if (v.compare("v") == 0) {
+//             cin >> tp.x >> tp.y >> tp.z;
 
-            // if (tp.y == 4) {
-            //     tp.y = tp.y - 2;
-            // }
+//             // if (tp.y == 4) {
+//             //     tp.y = tp.y - 2;
+//             // }
 
-            // if (tp.x == 18) {
-            //     tp.x = tp.x - 2;
-            // }
+//             // if (tp.x == 18) {
+//             //     tp.x = tp.x - 2;
+//             // }
 
-            // if (tp.z == -15) {
-            //     tp.z = -13;
-            // }
-            //tp.show();
-            mycube.push_back(tp);
-        } else {
-//            cout << "fim\n";
-            break;
-        }
-    } 
+//             // if (tp.z == -15) {
+//             //     tp.z = -13;
+//             // }
+//             //tp.show();
+//             mycube.push_back(tp);
+//         } else {
+// //            cout << "fim\n";
+//             break;
+//         }
+//     } 
 
     vector <TriangleFace> mycubefaces;
 

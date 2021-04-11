@@ -50,7 +50,12 @@ class TriangleFace: public Object {
 
         Vector3 normalAt(Point3 &point) {
             // normal at given interception point?
-            return unit_vector(Vector3(0, 1, 0));
+            Vector3 w1 = v2 - v1;
+            Vector3 w2 = v3 - v1;
+
+            Vector3 N = cross(w1, w2);
+
+            return unit_vector(N);
         };
 };
 

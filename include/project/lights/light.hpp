@@ -37,9 +37,10 @@ Component genericLightContribution(Vector3 &normal, Vector3 &hitToObserver, Vect
     Component currentContribution = Component();
 
     // check if vectors are normalized.
-    assert(normal.length() == 1);
-    assert(hitToObserver.length() == 1);
-    assert(hitToLight.length() == 1);
+
+    //assert(normal.length() == 1.0);
+    // assert(hitToObserver.length() == 1);
+    // assert(hitToLight.length() == 1);
     
     float n_dot_l = dot(normal, hitToLight);
 

@@ -72,6 +72,9 @@ class Cylinder: public Object {
         }
 
         Vector3 normalAt(Point3 &point) {
-            return Vector3(0, 1, 0);
+            Vector3 w = point - base;
+            Vector3 N = w - (dot(w, direction) * direction);
+
+            return N / baseRadius;
         };
 };

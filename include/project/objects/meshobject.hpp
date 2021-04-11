@@ -2,6 +2,8 @@
 #include "../objects/triangle.hpp"
 #include <stdexcept>
 #include <vector>
+#include "../transform.hpp"
+
 using namespace std;
 
 class MeshObject: public Object {
@@ -40,8 +42,17 @@ class MeshObject: public Object {
             throw std::invalid_argument(
                 "We can't compute the normal for a mesh object. We must delegate to apropriate triangle face."
             );
-        };
-};
+        }
+
+        /*MeshObject meshTranslate(Vector3 &dir){
+            Transform t;
+            for (TriangleFace tf:mesh){
+               tf.v1=translatePoint(tf.v1, dir);
+               tf.v2=translatePoint(tf.v2, dir);
+               tf.v3=translatePoint(tf.v3, dir);
+            }
+        }*/
+}; 
 
 MeshObject makeCube(int cube_xmin, int cube_xmax, int cube_ymin, int cube_ymax, int cube_zmin, int cube_zmax) {
     // int cube_xmin = 20;

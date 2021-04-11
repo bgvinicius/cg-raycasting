@@ -9,10 +9,19 @@ class MeshObject: public Object {
         vector<TriangleFace> mesh;
 
         MeshObject(vector<TriangleFace> mesh): mesh(mesh) {
-            
+        }
+
+        MeshObject(vector<TriangleFace> mesh, Material material): mesh(mesh), Object(material) {
+            setMaterial(material);
         }
 
         MeshObject() {}
+
+        void setMaterial(Material material) {
+            for (int i = 0; i < mesh.size(); i++) {
+                mesh[i].material = material;
+            }
+        }
 
         // add a new mesh to this object. Return this to enable chaining.
         MeshObject& add(TriangleFace &face) {

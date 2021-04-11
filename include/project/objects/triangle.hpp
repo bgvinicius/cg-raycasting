@@ -15,6 +15,9 @@ class TriangleFace: public Object {
             
         }
 
+        TriangleFace(Point3 v1, Point3 v2, Point3 v3, Material material): Object(material), v1(v1), v2(v2), v3(v3) {
+        }
+
         void intercepts(Ray &ray, InterceptionInfo &info) {
                 const float EPSILON = 0.0000001;
                 Point3 vertex0 = v1;

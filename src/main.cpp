@@ -150,6 +150,7 @@ void render(vector<TriangleFace> &triangles) {
     Material m1 = Material(reflectionFromRGB(255, 255, 255), reflectionFromRGB(100, 100, 100), reflectionFromRGB(100, 100, 100), 2.0);
     Material m2 = Material(reflectionFromRGB(255, 255, 255), reflectionFromRGB(230, 100, 233), reflectionFromRGB(80, 70, 200), 3.0);
     Material m3 = Material(reflectionFromRGB(255, 255, 255), reflectionFromRGB(230, 20, 40), reflectionFromRGB(100, 90, 230), 3.0);
+    Material m4 = Material(reflectionFromRGB(255, 255, 255), reflectionFromRGB(230, 230, 230), reflectionFromRGB(230, 230, 230), 3.0);
 
     Material planeFloor = Material(reflectionFromRGB(70, 46, 26), reflectionFromRGB(70, 46, 26), reflectionFromRGB(70, 46, 26), 1.0);
 
@@ -159,8 +160,9 @@ void render(vector<TriangleFace> &triangles) {
     Sphere esf4 = Sphere(Point3(4.0, 1.5, -7), 3, m2);
     Cylinder cil1 = Cylinder(Point3(-2, 0, -3.0), 1.0f, 1.0f, Vector3(0, 1, 0), m3);
     Cone cone1 = Cone(Point3(0, -3, -3.0), Vector3(0, 1.0, 0), 2.0, 1.0, m2);
-    MeshObject mesh = makeCube(20, 24, 0, 4, -11, -13);
-    Plane plane = Plane(Point3(0, -4, 0), Vector3(0, 1, 0), planeFloor);
+    MeshObject mesh = makeCube(2, 4, -7.0, -3.0, -3.0, -5.0);
+    mesh.setMaterial(m1);
+    Plane plane = Plane(Point3(0, -7, 0), Vector3(0, 1, 0), planeFloor);
     
     esfs.push_back(&esf1);
     esfs.push_back(&esf2);
@@ -176,7 +178,7 @@ void render(vector<TriangleFace> &triangles) {
 
     AmbientLight ambientLight = AmbientLight(0.1);
 
-    PointLight pointLight = PointLight(Point3(0, 10, 10), reflectionFromRGB(255, 255, 255), reflectionFromRGB(255, 255, 255));
+    PointLight pointLight = PointLight(Point3(-10, 10, 10), reflectionFromRGB(255, 255, 255), reflectionFromRGB(255, 255, 255));
     vector<Light*> lights = {
         &ambientLight,
         &pointLight

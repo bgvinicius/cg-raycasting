@@ -2,6 +2,10 @@
 #ifndef INTERCEPTIONINFO_H
 #define INTERCEPTIONINFO_H
 #include "ray.hpp"
+#include "lights/light.hpp"
+#include <vector>
+
+using namespace std;
 
 class Object;
 class InterceptionInfo {

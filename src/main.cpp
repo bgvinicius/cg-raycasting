@@ -11,6 +11,7 @@
 #include "project/objects/meshobject.hpp"
 #include "project/objects/plane.hpp"
 #include "project/lights/material.hpp"
+#include "project/lights/light.hpp"
 
 using namespace std;
 
@@ -86,6 +87,23 @@ float computeLightingFloor(Vector3 &normal, Vector3 &pixelToEye, int s, Point3 &
     return i;
 }
 
+Component getColor(vector<Light*> &lights, Vector3 &hitPointToObserver, Point3 &hitPoint, Object &hitObject) {
+    Component currentColor = Component(0, 0, 0);
+
+    for (int i = 0; i < lights.size(); i++) {
+        //Point3 hitPoint = getHitPoint();
+        Vector3 normal = hitObject.normalAt(hitPoint);
+        
+        Component contribution = lights[i]->contribution(normal, hitPoint, hitPointToObserver, hitObject.material);
+
+        currentColor.r += contribution.r;
+        currentColor.g += contribution.g;
+        currentColor.b += contribution.b;
+    }
+
+    return currentColor;
+}
+
 void render(vector<TriangleFace> &triangles) {
     Point3 eye = Point3(0, 0, 0);
     Point3 at = Point3(0, 0, -1);
@@ -112,8 +130,8 @@ void render(vector<TriangleFace> &triangles) {
 
     eye = Point3(0, 0, 0);
 
-    const int width = 800;
-    const int height = 800;
+    const int width = 1366;
+    const int height = 768;
 
     std::cout << "P3\n" << width << " " << height << "\n255\n";
 
@@ -129,16 +147,20 @@ void render(vector<TriangleFace> &triangles) {
 
     vector<Object*> esfs;
 
-    Material m = Material(reflectionFromRGB(100, 100, 100), reflectionFromRGB(100, 100, 100), reflectionFromRGB(100, 100, 100));
+    Material m1 = Material(reflectionFromRGB(255, 255, 255), reflectionFromRGB(100, 100, 100), reflectionFromRGB(100, 100, 100), 2.0);
+    Material m2 = Material(reflectionFromRGB(255, 255, 255), reflectionFromRGB(230, 100, 233), reflectionFromRGB(80, 70, 200), 3.0);
+    Material m3 = Material(reflectionFromRGB(255, 255, 255), reflectionFromRGB(230, 20, 40), reflectionFromRGB(100, 90, 230), 3.0);
 
-    Sphere esf1 = Sphere(Point3(0.0, 0.0, -1.0), 0.5, m);
-    Sphere esf2 = Sphere(Point3(1.0, 0.0, -1.5), 0.5, m);
-    Sphere esf3 = Sphere(Point3(2.0, 1.5, -2.5), 1, m);
-    Sphere esf4 = Sphere(Point3(4.0, 1.5, -7), 3, m);
-    Cylinder cil1 = Cylinder(Point3(-2, 0, -3.0), 1.0f, 1.0f, Vector3(0, 1, 0), m);
-    Cone cone1 = Cone(Point3(0, -3, -3.0), Vector3(0, 1.0, 0), 2.0, 1.0, m);
+    Material planeFloor = Material(reflectionFromRGB(70, 46, 26), reflectionFromRGB(70, 46, 26), reflectionFromRGB(70, 46, 26), 1.0);
+
+    Sphere esf1 = Sphere(Point3(0.0, 0.0, -1.0), 0.5, m1);
+    Sphere esf2 = Sphere(Point3(1.0, 0.0, -1.5), 0.5, m2);
+    Sphere esf3 = Sphere(Point3(2.0, 1.5, -2.5), 1, m3);
+    Sphere esf4 = Sphere(Point3(4.0, 1.5, -7), 3, m2);
+    Cylinder cil1 = Cylinder(Point3(-2, 0, -3.0), 1.0f, 1.0f, Vector3(0, 1, 0), m3);
+    Cone cone1 = Cone(Point3(0, -3, -3.0), Vector3(0, 1.0, 0), 2.0, 1.0, m2);
     MeshObject mesh = makeCube(20, 24, 0, 4, -11, -13);
-    Plane plane = Plane(Point3(0, -4, 0), Vector3(0, 1, 0), m);
+    Plane plane = Plane(Point3(0, -4, 0), Vector3(0, 1, 0), planeFloor);
     
     esfs.push_back(&esf1);
     esfs.push_back(&esf2);
@@ -150,6 +172,15 @@ void render(vector<TriangleFace> &triangles) {
     esfs.push_back(&plane);
 
     int o = esfs.size();
+
+
+    AmbientLight ambientLight = AmbientLight(0.3);
+
+    PointLight pointLight = PointLight(Point3(0, 1, 0), Component(255, 255, 255), Component(255, 255, 255));
+    vector<Light*> lights = {
+        &ambientLight,
+        &pointLight
+    };
 
     for (int h = height, i = 0; h >= 0; h--, i++) {
         for (int w = 0; w < width; w++) {
@@ -172,15 +203,15 @@ void render(vector<TriangleFace> &triangles) {
             }
 
             if (interception.valid) {
+                Vector3 hitPointToObserver = unit_vector(raio.direction.reverse());
                 Point3 hitPoint = interception.getHitPoint();
-                //Vector3 normal = interception.hitObject->normalAt(hitPoint);
-                //Vector3 interToEye = direction.reverse();
-                Vector3 b = direction * -1;
-                //float light = computeLighting(normal, b, 500);
+                // Object *hitObject = interception.hitObject;
+    
+                Component finalColor = getColor(lights, hitPointToObserver, hitPoint, *interception.hitObject);
 
-                Material m = interception.hitObject->material;
+                //Material m = interception.hitObject->material;
 
-                write_color(std::cout, m.ambient.r * 255, m.ambient.g * 255, m.ambient.b * 255);
+                write_color(std::cout, finalColor.r * 255, finalColor.g * 255, finalColor.b * 255);
             } else {
                 write_color(std::cout, 255, 255, 255);
             }

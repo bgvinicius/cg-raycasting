@@ -8,7 +8,8 @@ class Cone: public Object {
         float height;
         float baseRadius;
 
-        Cone(Point3 top, Vector3 direction, float height, float baseRadius): top(top), direction(direction) {
+        Cone(Point3 top, Vector3 direction, float height, float baseRadius, Material material): 
+            Object(material), top(top), direction(direction) {
             this->height = height;
             this->baseRadius = baseRadius;
         }

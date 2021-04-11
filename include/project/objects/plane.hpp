@@ -5,7 +5,8 @@ class Plane: public Object {
         Point3 planePoint;
         Vector3 planeNormal;
 
-        Plane(Point3 planePoint, Vector3 planeNormal): planePoint(planePoint), planeNormal(unit_vector(planeNormal)) {
+        Plane(Point3 planePoint, Vector3 planeNormal, Material material): 
+            Object(material), planePoint(planePoint), planeNormal(unit_vector(planeNormal)) {
 
         }
 

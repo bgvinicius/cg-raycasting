@@ -7,7 +7,8 @@ class Cylinder: public Object {
         Point3 base;
         Vector3 direction;
 
-        Cylinder(Point3 base, float baseRadius, float height, Vector3 direction): base(base), direction(direction) {
+        Cylinder(Point3 base, float baseRadius, float height, Vector3 direction, Material material):
+            Object(material), base(base), direction(direction) {
             this->baseRadius = baseRadius;
             this->height = height;
         }

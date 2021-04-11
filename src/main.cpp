@@ -10,6 +10,7 @@
 #include "project/objects/triangle.hpp"
 #include "project/objects/meshobject.hpp"
 #include "project/objects/plane.hpp"
+#include "project/lights/material.hpp"
 
 using namespace std;
 
@@ -128,14 +129,16 @@ void render(vector<TriangleFace> &triangles) {
 
     vector<Object*> esfs;
 
-    Sphere esf1 = Sphere(Point3(0.0, 0.0, -1.0), 0.5);
-    Sphere esf2 = Sphere(Point3(1.0, 0.0, -1.5), 0.5);
-    Sphere esf3 = Sphere(Point3(2.0, 1.5, -2.5), 1);
-    Sphere esf4 = Sphere(Point3(4.0, 1.5, -7), 3);
-    Cylinder cil1 = Cylinder(Point3(-2, 0, -3.0), 1.0f, 1.0f, Vector3(0, 1, 0));
-    Cone cone1 = Cone(Point3(0, -3, -3.0), Vector3(0, 1.0, 0), 2.0, 1.0);
+    Material m = Material(reflectionFromRGB(100, 100, 100), reflectionFromRGB(100, 100, 100), reflectionFromRGB(100, 100, 100));
+
+    Sphere esf1 = Sphere(Point3(0.0, 0.0, -1.0), 0.5, m);
+    Sphere esf2 = Sphere(Point3(1.0, 0.0, -1.5), 0.5, m);
+    Sphere esf3 = Sphere(Point3(2.0, 1.5, -2.5), 1, m);
+    Sphere esf4 = Sphere(Point3(4.0, 1.5, -7), 3, m);
+    Cylinder cil1 = Cylinder(Point3(-2, 0, -3.0), 1.0f, 1.0f, Vector3(0, 1, 0), m);
+    Cone cone1 = Cone(Point3(0, -3, -3.0), Vector3(0, 1.0, 0), 2.0, 1.0, m);
     MeshObject mesh = makeCube(20, 24, 0, 4, -11, -13);
-    Plane plane = Plane(Point3(0, -4, 0), Vector3(0, 1, 0));
+    Plane plane = Plane(Point3(0, -4, 0), Vector3(0, 1, 0), m);
     
     esfs.push_back(&esf1);
     esfs.push_back(&esf2);
@@ -163,7 +166,6 @@ void render(vector<TriangleFace> &triangles) {
 
             Ray raio(eye, direction);
 
-            bool didIntersect = false;
             InterceptionInfo interception(raio);
             for (int e = 0; e < o; e++) {
                 esfs[e]->intercepts(raio, interception);
@@ -176,8 +178,9 @@ void render(vector<TriangleFace> &triangles) {
                 Vector3 b = direction * -1;
                 //float light = computeLighting(normal, b, 500);
 
-                write_color(std::cout, 80, 50, 200);
-                didIntersect = true;
+                Material m = interception.hitObject->material;
+
+                write_color(std::cout, m.ambient.r * 255, m.ambient.g * 255, m.ambient.b * 255);
             } else {
                 write_color(std::cout, 255, 255, 255);
             }

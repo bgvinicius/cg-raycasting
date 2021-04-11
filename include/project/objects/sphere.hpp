@@ -6,7 +6,7 @@ class Sphere: public Object {
     public:
         float radius;
         Point3 center;
-        Sphere(Point3 center, float radius): center(center) {
+        Sphere(Point3 center, float radius, Material material): Object(material), center(center) {
             this->radius = radius;
         }
 
@@ -31,6 +31,7 @@ class Sphere: public Object {
             //     std::cerr << "x: " << p.x << " y: " << p.y << " z: " << p.z << "\n";
             // }
 
+            info.updateInterception(t1, this);
             info.updateInterception(t2, this);
         }
 

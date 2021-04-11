@@ -1,3 +1,5 @@
+#ifndef MATRIX4_H
+#define MATRIX4_H
 #include <vector>
 
 #include "vector3.hpp"
@@ -12,7 +14,7 @@ class Matrix4 {
         Matrix4(vector<vector<float>> index): index(index) {};
 };
 
-Matrix4 identity() {
+Matrix4 identityMatrix() {
     Matrix4 identity;
     identity.index[0][0] = 1;
     identity.index[1][1] = 1;
@@ -166,3 +168,5 @@ Vector3 operator*(Vector3 &v, Matrix4 &u) {
     u.index[2][0]*v.x + u.index[2][1]*v.y + u.index[2][2]*v.z);
 
 }
+
+#endif

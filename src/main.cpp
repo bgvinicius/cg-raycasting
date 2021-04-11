@@ -160,18 +160,26 @@ void render(vector<TriangleFace> &triangles) {
     Sphere esf4 = Sphere(Point3(4.0, 1.5, -7), 3, m2);
     Cylinder cil1 = Cylinder(Point3(-2, 0, -3.0), 1.0f, 1.0f, Vector3(0, 1, 0), m3);
     Cone cone1 = Cone(Point3(0, -3, -3.0), Vector3(0, 1.0, 0), 2.0, 1.0, m2);
-    MeshObject mesh = makeCube(2, 4, -7.0, -3.0, -3.0, -5.0);
+    MeshObject mesh = makeCube(2, 4, -5.0, -3.0, -3.0, -5.0);
     mesh.setMaterial(m1);
     Plane plane = Plane(Point3(0, -7, 0), Vector3(0, 1, 0), planeFloor);
+
+
+    Vector3 trVector = Vector3(4, 4, -5);
+    //Vector3 goBack = trVector.reverse();
+    Vector3 X_AXIS = Vector3(0, 0, 1);
+    mesh.meshTranslate(trVector);
+    mesh.meshRotate(X_AXIS, 1.0);
+    // mesh.meshTranslate(goBack);
     
-    esfs.push_back(&esf1);
-    esfs.push_back(&esf2);
-    esfs.push_back(&esf3);
-    esfs.push_back(&esf4);
-    esfs.push_back(&cil1);
-    esfs.push_back(&cone1);
+    // esfs.push_back(&esf1);
+    // esfs.push_back(&esf2);
+    // esfs.push_back(&esf3);
+    // esfs.push_back(&esf4);
+    // esfs.push_back(&cil1);
+    // esfs.push_back(&cone1);
     esfs.push_back(&mesh);
-    esfs.push_back(&plane);
+    // esfs.push_back(&plane);
 
     int o = esfs.size();
 

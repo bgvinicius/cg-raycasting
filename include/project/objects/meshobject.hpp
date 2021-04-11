@@ -44,14 +44,21 @@ class MeshObject: public Object {
             );
         }
 
-        /*MeshObject meshTranslate(Vector3 &dir){
-            Transform t;
-            for (TriangleFace tf:mesh){
-               tf.v1=translatePoint(tf.v1, dir);
-               tf.v2=translatePoint(tf.v2, dir);
-               tf.v3=translatePoint(tf.v3, dir);
+        void meshTranslate(Vector3 &dir){
+            for (TriangleFace &tf : mesh){
+                tf.v1=translatePoint(tf.v1, dir);
+                tf.v2=translatePoint(tf.v2, dir);
+                tf.v3=translatePoint(tf.v3, dir);
             }
-        }*/
+        }
+
+        void meshRotate(Vector3 &axis, float teta) {
+            for (TriangleFace &tf : mesh) {
+                tf.v1 = rotation(axis, tf.v1, teta); 
+                tf.v2 = rotation(axis, tf.v2, teta);
+                tf.v3 = rotation(axis, tf.v3, teta);
+            }
+        }
 }; 
 
 MeshObject makeCube(int cube_xmin, int cube_xmax, int cube_ymin, int cube_ymax, int cube_zmin, int cube_zmax) {

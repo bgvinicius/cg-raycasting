@@ -35,7 +35,7 @@ class Transform{
         }
 
        Matrix4 shearingMatrix(Vector3 &v, Vector3 &u, float x) {
-            Matrix4 resultado = identity();
+            Matrix4 resultado = identityMatrix();
             if (v.z == 1 and u.x == 1) {
                 resultado.index[0][1] = x;
             }
@@ -58,7 +58,7 @@ class Transform{
         }
 
         Matrix4 rotationMatrix(Vector3 &v, float t){
-            Matrix4 resultado = identity();
+            Matrix4 resultado = identityMatrix();
             if(v.x==1){
                 resultado.index[1][1] = cos(t);
                 resultado.index[2][2] = cos(t);
@@ -78,7 +78,7 @@ class Transform{
                 resultado.index[1][0] = sin(t);
             }
 
-
+            return resultado;
         }
 
 };
@@ -127,5 +127,3 @@ Point3 rotation(Vector3 &v, Point3 &p, float theta){
 };*/
 
 #endif
-
-

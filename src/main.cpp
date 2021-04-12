@@ -22,48 +22,13 @@ void write_color(std::ostream &out, float r, float g, float b) {
         << static_cast<int>(b) << '\n';
 }
 
-// class TriangleFace {
-//     public:
-//         Point3 v1, v2, v3;
-//         Point3 rgb;
-
-//         TriangleFace(): v1(Point3(0, 0, 0)), v2(Point3(0, 0, 0)), v3(Point3(0, 0, 0)), rgb(Point3(0, 0, 0)) {
-
-//         }
-//         TriangleFace(Point3 v1, Point3 v2, Point3 v3, Point3 rgb): v1(v1), v2(v2), v3(v3), rgb(rgb) {}
-
-//         // void show() {
-//         //     cout << "v1: " << v1 << " v2: " << v2 << " v3: " << v3 << "\n";
-//         // }
-// };
-
-float computeLighting(Vector3 &normal, Vector3 &pixelToEye, int s) {
-    float i = 0.5;
-
-    Vector3 lightD(0, 1, 0);
-    float n_dot_l = dot(normal, lightD);
-
-    if (n_dot_l > 0) {
-        i += 0.5 * (n_dot_l / (normal.length() * lightD.length()));
-    }
-
-    Vector3 R = ((2.0 * normal) * dot(normal, lightD)) - lightD;
-    float rdotv = dot(R, pixelToEye);
-
-    if (rdotv > 0) {
-        i += 0.5 * pow(rdotv / (R.length() * pixelToEye.length()), s);
-    }
-
-    return i;
-}
-
-float computeLightingFloor(Vector3 &normal, Vector3 &pixelToEye, int s, Point3 &pontoInter, vector<Sphere> &esfs, int nesfs) {
+float computeLightingFloor(Vector3 &normal, Vector3 &pixelToEye, int s, Point3 &pontoInter, vector<Sphere> &objects, int nobjects) {
     float i = 0.5;
 
     Vector3 lightD(0, 1, 0);
 
     //Ray shadowRay = Ray(pontoInter, lightD);
-    // if (doesIntercept(esfs, nesfs, shadowRay)) {
+    // if (doesIntercept(objects, nobjects, shadowRay)) {
     //     //cerr << "a";
     //     return i;
     // }
@@ -104,7 +69,7 @@ Component getColor(vector<Light*> &lights, Vector3 &hitPointToObserver, Point3 &
     return currentColor;
 }
 
-void render(vector<TriangleFace> &triangles) {
+void render() {
     Point3 eye = Point3(0, 0, 5);
     Point3 at = Point3(0, 0, 0);
     Point3 up = Point3(0, 1, 0);
@@ -128,7 +93,7 @@ void render(vector<TriangleFace> &triangles) {
 
     std::cerr << "renderizando...\n";
 
-    vector<Object*> esfs;
+    vector<Object*> objects;
 
     Material m1 = Material(reflectionFromRGB(255, 255, 255), reflectionFromRGB(100, 100, 100), reflectionFromRGB(100, 100, 100), 2.0);
     Material m2 = Material(reflectionFromRGB(255, 255, 255), reflectionFromRGB(230, 100, 233), reflectionFromRGB(80, 70, 200), 3.0);
@@ -162,21 +127,23 @@ void render(vector<TriangleFace> &triangles) {
     // mesh.meshScale(trVector, mesh.mesh[0].v1);
     // mesh.meshRotate(X_AXIS, 1.0);
     // mesh.meshTranslate(goBack);
+
+    trVector = Vector3(-1, -1, 2);
+    esf1.translate(trVector);
     
-    esfs.push_back(&esf1);
-    esfs.push_back(&esf2);
-    esfs.push_back(&esf3);
-    esfs.push_back(&esf4);
-    esfs.push_back(&cil1);
-    esfs.push_back(&cone1);
-    esfs.push_back(&mesh);
-    // esfs.push_back(&xAx);
-    // esfs.push_back(&yAx);
-    // esfs.push_back(&zAx);
-    esfs.push_back(&plane);
+    objects.push_back(&esf1);
+    objects.push_back(&esf2);
+    objects.push_back(&esf3);
+    objects.push_back(&esf4);
+    objects.push_back(&cil1);
+    objects.push_back(&cone1);
+    objects.push_back(&mesh);
+    // objects.push_back(&xAx);
+    // objects.push_back(&yAx);
+    // objects.push_back(&zAx);
+    objects.push_back(&plane);
 
-    int o = esfs.size();
-
+    int o = objects.size();
 
     AmbientLight ambientLight = AmbientLight(0.1);
 
@@ -189,10 +156,12 @@ void render(vector<TriangleFace> &triangles) {
 
     // ===== WORLD COORDINATES TO CAMERA COORDINATES TRANSFORMATION =======
 
-    pointLight.toCamera(camera.worldToCamera);
+    for (int i = 0; i < lights.size(); i++) {
+        lights[i]->toCamera(camera.worldToCamera);
+    }
 
-    for (int i = 0; i < esfs.size(); i++) {
-        esfs[i]->toCamera(camera.worldToCamera);
+    for (int i = 0; i < objects.size(); i++) {
+        objects[i]->toCamera(camera.worldToCamera);
     }
 
     for (int h = height, i = 0; h >= 0; h--, i++) {
@@ -212,7 +181,7 @@ void render(vector<TriangleFace> &triangles) {
 
             InterceptionInfo interception(raio);
             for (int e = 0; e < o; e++) {
-                esfs[e]->intercepts(raio, interception);
+                objects[e]->intercepts(raio, interception);
             }
 
             if (interception.valid) {
@@ -240,82 +209,5 @@ void render(vector<TriangleFace> &triangles) {
 }
 
 int main() {
-
-//     for (int i = 0; i < 4; i++) {
-//         string t;
-//         getline(cin, t);
-//         //cin >> t;
-
-//         //cout << t << "\n";
-//     }
-
-//     vector <Point3> mycube;
-
-//     for (int i = 0; i < 24; i++) {
-//         string v;
-//         Point3 tp(0, 0, 0);
-    
-//         cin >> v;
-//         if (v.compare("v") == 0) {
-//             cin >> tp.x >> tp.y >> tp.z;
-
-//             // if (tp.y == 4) {
-//             //     tp.y = tp.y - 2;
-//             // }
-
-//             // if (tp.x == 18) {
-//             //     tp.x = tp.x - 2;
-//             // }
-
-//             // if (tp.z == -15) {
-//             //     tp.z = -13;
-//             // }
-//             //tp.show();
-//             mycube.push_back(tp);
-//         } else {
-// //            cout << "fim\n";
-//             break;
-//         }
-//     } 
-
-    vector <TriangleFace> mycubefaces;
-    
-
-
-    // for (int i = 0; i < 12; i++) {
-    //     string v;
-
-    //     int p1, p2, p3;
-
-    //     cin >> v >> p1 >> p2 >> p3;
-
-    //     Point3 v1 = mycube[p1-1];
-    //     Point3 v2 = mycube[p2-1];
-    //     Point3 v3 = mycube[p3-1];
-
-    //     TriangleFace face;
-
-    //     face.v1 = v1;
-    //     face.v2 = v2;
-    //     face.v3 = v3;
-
-    //     mycubefaces.push_back(face);
-    // }
-
-    // for (int i = 0; i < 12; i++ ){
-    //     TriangleFace face = mycubefaces[i];
-
-    //     cout << "face " << i << "\n";
-    //     cout << "v1: " << "(" << face.v1.x << ", " << face.v1.y << ", " << face.v1.z << ")\n";
-    //     cout << "v2: " << "(" << face.v2.x << ", " << face.v2.y << ", " << face.v2.z << ")\n";
-    //     cout << "v3: " << "(" << face.v3.x << ", " << face.v3.y << ", " << face.v3.z << ")\n";
-
-    // }
-
-    render(mycubefaces);
-
-    // while (true) {
-
-    // }
-    //render();
+    render();
 }

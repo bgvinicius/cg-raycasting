@@ -1,4 +1,5 @@
 #include "../object.hpp"
+#include "../transform.hpp"
 
 class Cylinder: public Object {
     public:
@@ -81,5 +82,22 @@ class Cylinder: public Object {
         void toCamera(Matrix4 &toCamera) {
             this->base = this->base * toCamera;
             this->direction = unit_vector(this->direction * toCamera);
+        }
+
+        void uniformScale(Vector3 &scale, Point3 &ancor) {
+            float factor = scale.x;
+
+            this->baseRadius *= factor;
+            this->height *= factor;
+
+            this->base = scalePoint(scale, this->base, ancor);
+        }
+
+        void rotate(Vector3 &axis, float teta) {
+            this->base = rotationPoint(axis, this->base, teta);
+        }
+
+        void translate(Vector3 &dir) {
+            this->base = translatePoint(dir, this->base);
         }
 };

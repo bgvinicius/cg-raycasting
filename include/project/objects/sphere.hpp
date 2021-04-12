@@ -1,6 +1,7 @@
 #include "../point3.hpp"
 #include "../ray.hpp"
 #include "../object.hpp"
+#include "../transform.hpp"
 
 class Sphere: public Object {
     public:
@@ -41,5 +42,21 @@ class Sphere: public Object {
 
         void toCamera(Matrix4 &toCamera) {
             this->center = this->center * toCamera;
+        }
+
+        void uniformScale(Vector3 &scale, Point3 &ancor) {
+            float factor = scale.x;
+
+            this->radius *= factor;
+
+            this->center = scalePoint(scale, this->center, ancor);
+        }
+
+        void rotate(Vector3 &axis, float teta) {
+            this->center = rotationPoint(axis, this->center, teta);
+        }
+
+        void translate(Vector3 &dir) {
+            this->center = translatePoint(dir, this->center);
         }
 };

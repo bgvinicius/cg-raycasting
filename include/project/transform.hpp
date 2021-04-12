@@ -77,6 +77,8 @@ class Transform{
                 resultado.index[0][1] = -sin(t);
                 resultado.index[1][0] = sin(t);
             }
+
+            return resultado;
         }
 
         Matrix4 reflectionMatrix(Vector3 &plane){

@@ -30,6 +30,7 @@ class Light {
         // p: Interception point
         // v: Vector from the interception point to the observer
         virtual Component contribution(Vector3 &n, Point3 &p, Vector3 &v, Material &material) = 0;
+        virtual void toCamera(Matrix4 &toCamera) { }
 };
 
 // for non-ambient lights. Takes the components of the light + direction vector + default info for any light (normal, hit to observer vector)

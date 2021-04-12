@@ -1,4 +1,5 @@
 #include "../object.hpp"
+#include "../transform.hpp"
 
 class Cone: public Object {
     public:
@@ -14,6 +15,10 @@ class Cone: public Object {
             Object(material), top(top), direction(unit_vector(direction)) {
             this->height = height;
             this->baseRadius = baseRadius;
+            precompute();
+        }
+
+        void precompute() {
             double H = height; //2.0;
             double R = baseRadius;// 1.0;
             double hipotenusa = sqrt(pow(H, 2.0) + pow(R, 2.0));
@@ -93,5 +98,24 @@ class Cone: public Object {
         void toCamera(Matrix4 &toCamera) {
             this->top = toCamera * this->top;
             this->direction = unit_vector(toCamera * this->direction);
+        }
+
+        void uniformScale(Vector3 &scale, Point3 &ancor) {
+            float factor = scale.x;
+
+            this->baseRadius *= factor;
+            this->height *= factor;
+
+            this->top = scalePoint(scale, this->top, ancor);
+
+            precompute();
+        }
+
+        void rotate(Vector3 &axis, float teta) {
+            this->top = rotationPoint(axis, this->top, teta);
+        }
+
+        void translate(Vector3 &dir) {
+            this->top = translatePoint(dir, this->top);
         }
 };

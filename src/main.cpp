@@ -153,8 +153,13 @@ void render(vector<TriangleFace> &triangles) {
 
     Vector3 trVector = Vector3(4, 4, -5);
     //Vector3 goBack = trVector.reverse();
-    // Vector3 X_AXIS = Vector3(0, 0, 1);
+    Vector3 XZ_AXIS = Vector3(0, 0, 1);
+
     mesh.meshTranslate(trVector);
+    trVector = Vector3(1, 0, 0);
+    mesh.meshShear(XZ_AXIS, trVector, 1);
+
+    // mesh.meshScale(trVector, mesh.mesh[0].v1);
     // mesh.meshRotate(X_AXIS, 1.0);
     // mesh.meshTranslate(goBack);
     
@@ -168,7 +173,7 @@ void render(vector<TriangleFace> &triangles) {
     // esfs.push_back(&xAx);
     // esfs.push_back(&yAx);
     // esfs.push_back(&zAx);
-    // esfs.push_back(&plane);
+    esfs.push_back(&plane);
 
     int o = esfs.size();
 
@@ -222,6 +227,9 @@ void render(vector<TriangleFace> &triangles) {
                 // if (finalColor.r > 1 or finalColor.g > 1 or finalColor.b > 1) {
                 //     cerr << "ops";
                 // }
+                finalColor.r = min(finalColor.r, 1.0f);
+                finalColor.g = min(finalColor.g, 1.0f);
+                finalColor.b = min(finalColor.b, 1.0f);
 
                 write_color(std::cout, finalColor.r * 255, finalColor.g * 255, finalColor.b * 255);
             } else {

@@ -77,7 +77,19 @@ class Transform{
                 resultado.index[0][1] = -sin(t);
                 resultado.index[1][0] = sin(t);
             }
+        }
 
+        Matrix4 reflectionMatrix(Vector3 &plane){
+            Matrix4 resultado = identityMatrix();
+            if(plane.y==1){
+                resultado.index[1][1]=-1;
+            }
+            if(plane.x==1){
+                resultado.index[0][0]=-1;
+            }
+            if(plane.z==1){
+                resultado.index[2][2]=-1;
+            }
             return resultado;
         }
 
@@ -116,14 +128,28 @@ Point3 shear(Vector3 &v, Vector3 &u, Point3 &p, float x) {
     return matrix_shear * p;
 };
 
-Point3 rotation(Vector3 &v, Point3 &p, float theta){
+Point3 rotationPoint(Vector3 &v, Point3 &p, float theta){
     Transform t;
     Matrix4 matrix_rotation = t.rotationMatrix(v,theta);
     return matrix_rotation *p;
 };
+
+Vector3 rotationVector(Vector3 &v, Vector3 &u, float theta){
+    Transform t;
+    Matrix4 matrix_rotation = t.rotationMatrix(v,theta);
+    return matrix_rotation *u;
+};
+
+Point3 reflectionPoint(Vector3 &plane, Point3 &p){
+    Transform t;
+    Matrix4 matrix_reflection = t.reflectionMatrix(plane);
+    return matrix_reflection * p;
+}
 
 /*Point3 reflection(){
 
 };*/
 
 #endif
+
+

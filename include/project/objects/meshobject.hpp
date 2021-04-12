@@ -54,10 +54,36 @@ class MeshObject: public Object {
 
         void meshRotate(Vector3 &axis, float teta) {
             for (TriangleFace &tf : mesh) {
-                tf.v1 = rotation(axis, tf.v1, teta); 
-                tf.v2 = rotation(axis, tf.v2, teta);
-                tf.v3 = rotation(axis, tf.v3, teta);
+                tf.v1 = rotationPoint(axis, tf.v1, teta); 
+                tf.v2 = rotationPoint(axis, tf.v2, teta);
+                tf.v3 = rotationPoint(axis, tf.v3, teta);
             }
+        }
+
+        void meshShear(Vector3 &plane, Vector3 &dir, float t){
+            for (TriangleFace &tf : mesh) {
+                tf.v1 = shear(plane, dir, tf.v1, t); 
+                tf.v2 = shear(plane, dir, tf.v2, t);
+                tf.v3 = shear(plane, dir, tf.v3, t);
+            }
+
+        }
+
+        void meshScale (Vector3 &scale, Point3 &ancor){
+            for (TriangleFace &tf : mesh) {
+                tf.v1 = scalePoint(scale, ancor, tf.v1); 
+                tf.v2 = scalePoint(scale, ancor, tf.v2);
+                tf.v3 = scalePoint(scale, ancor, tf.v3);
+            }
+        }
+
+        void meshReflection (Vector3 &plane){
+            for (TriangleFace &tf : mesh) {
+                tf.v1 = reflectionPoint(plane, tf.v1); 
+                tf.v2 = reflectionPoint(plane, tf.v2);
+                tf.v3 = reflectionPoint(plane, tf.v3);
+            }
+
         }
 }; 
 

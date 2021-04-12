@@ -70,7 +70,7 @@ Component getColor(vector<Light*> &lights, Vector3 &hitPointToObserver, Point3 &
 }
 
 void render() {
-    Point3 eye = Point3(0, 0, 8);
+    Point3 eye = Point3(0, 2, 8);
     Point3 at = Point3(0, 0, 0);
     Point3 up = Point3(0, 1, 0);
 
@@ -99,7 +99,9 @@ void render() {
     Material m2 = Material(reflectionFromRGB(255, 255, 255), reflectionFromRGB(230, 100, 233), reflectionFromRGB(80, 70, 200), 3.0);
     Material m3 = Material(reflectionFromRGB(255, 255, 255), reflectionFromRGB(230, 20, 40), reflectionFromRGB(100, 90, 230), 3.0);
     Material m4 = Material(reflectionFromRGB(255, 255, 255), reflectionFromRGB(100, 78, 230), reflectionFromRGB(230, 230, 230), 2.5);
-
+    Material orange = Material(reflectionFromRGB(255, 255, 255), reflectionFromRGB(255, 140, 0), reflectionFromRGB(255, 140, 0), 2.5);
+    Material green = Material(reflectionFromRGB(255, 255, 255),reflectionFromRGB(0, 100, 0), reflectionFromRGB(0, 100, 0), 3.0 );
+    Material yellow = Material(reflectionFromRGB(255, 255, 255),reflectionFromRGB(255, 228, 181), reflectionFromRGB(255, 238, 181), 3.0  );
     Material planeFloor = Material(reflectionFromRGB(70, 46, 26), reflectionFromRGB(70, 46, 26), reflectionFromRGB(70, 46, 26), 1.0);
 
     //Sphere esf1 = Sphere(Point3(0.0, 0.0, -1.0), 0.5, m1);
@@ -116,14 +118,15 @@ void render() {
     Plane plane = Plane(Point3(0, -7, 0), Vector3(0, 1, 0), planeFloor);
 
     //casa
-    MeshObject casaParede = makeCube(-2, 2, -2.0, 2.0, 2.0, -2.0, m4, m3, m1, m2);
-    TriangleFace casaFrente = TriangleFace(Point3(-2, 2, 2), Point3(2,2,2), Point3(0,3,2), m4);
-    TriangleFace casaTras = TriangleFace(Point3(-2, 2, -2), Point3(2,2,-2), Point3(0,3,-2), m4);
-    MeshObject porta = makeRet(-0.5, 0.5, -2, 0, 2.000001, m3);
-    MeshObject janela1 = makeRet(-1.5, -1, -0.5, 0.5, 2.000001, m3);
-    MeshObject janela2 = makeRet(1, 1.5, -0.5, 0.5, 2.000001, m3);
+    MeshObject casaParede = makeCube(-2, 2, -2.0, 2.0, 2.0, -2.0, m1, m1, m1, m1);
+    TriangleFace casaFrente = TriangleFace(Point3(-2, 2, 2), Point3(2,2,2), Point3(0,3,2), m1);
+    TriangleFace casaTras = TriangleFace(Point3(-2, 2, -2), Point3(2,2,-2), Point3(0,3,-2), m1);
+    MeshObject porta = makeCube(-0.5, 0.5, -2, 0, 1.99999, 2.00001, m3, m3, m3, m3);
+    MeshObject janela1 = makeCube(-1.5, -1, -0.5, 0.5, 1.99999, 2.00001, m3, m3, m3, m3);
+    MeshObject janela2 = makeCube(1, 1.5, -0.5, 0.5, 1.99999, 2.00001, m3, m3,m3, m3);
     MeshObject telhadoEsquerda = makeCube(-2.35, -2, 2.0, 3.0, 2.15, -2.15, m3, m3, m3, m3);
     MeshObject telhadoDireita = makeCube(2, 2.35, 2.0, 3.0, 2.15, -2.15, m3, m3, m3, m3);
+    MeshObject telhadoCima = makeCube(-0.35, 0.35, 3.0, 3.15, 2, -2, m3, m3, m3, m3);
     Vector3 dir = Vector3(0,-2,0);
     telhadoDireita.meshTranslate(dir);
     telhadoEsquerda.meshTranslate(dir);
@@ -134,18 +137,50 @@ void render() {
     Vector3 dir2 = Vector3(0,2,0);
     telhadoEsquerda.meshTranslate(dir2);
     telhadoDireita.meshTranslate(dir2);
+
+    //casa 2
+    MeshObject parede2 = makeCube(6, 10, -2,5, 2, -2, yellow, yellow, yellow, yellow);
+    MeshObject porta2 = makeCube(7.5, 8.5, -2, 1, 1.99999, 2.00001, m3, m3, m3, m3);
+    MeshObject telhado2= makeCube(6, 10, 5, 5.01, 2, -2, m1, m1, m1, m1);
+    TriangleFace t1 = TriangleFace(Point3(6, 5,2), Point3(10, 5,2 ), Point3(6,5,-2), m3);
+    TriangleFace t2 = TriangleFace(Point3(10, 5,2), Point3(10, 5,-2 ), Point3(6,5,-2), m3);
+
     //arvore
-    Cylinder tronco1 = Cylinder(Point3(4, -2, 4), 0.2, 3, Vector3(0, 1, 0), m1);
-    Cone copa11 = Cone(Point3(4, 3, 4), Vector3(0, 1, 0), 3.0, 1.0, m2);
-    Cone copa12 = Cone(Point3(4, 4, 4), Vector3(0, 1, 0), 3.0, 1.0, m2);
+    Cylinder tronco1 = Cylinder(Point3(4, -2, 4), 0.2, 3, Vector3(0, 1, 0), planeFloor);
+    Cone copa11 = Cone(Point3(4, 3, 4), Vector3(0, 1, 0), 3.0, 1.0, green);
+    Cone copa12 = Cone(Point3(4, 4, 4), Vector3(0, 1, 0), 3.0, 1.0, green);
+
+    //arvore 2
+    Cylinder tronco2 = Cylinder(Point3(-5.5, -2, 3.5), 0.2, 3, Vector3(0, 1, 0), planeFloor);
+    Cone copa21 = Cone(Point3(-5.5, 4, 3.5), Vector3(0, 1, 0), 4.0, 1.0, green);
+    Cone copa22 = Cone(Point3(-5.5, 5, 3.5), Vector3(0, 1, 0), 4.0, 1.0, green);
 
     //snowman
     Sphere snow1 = Sphere(Point3(-4, -2, 4), 0.8, m1);
     Sphere snow2 = Sphere(Point3(-4, -0.6, 4), 0.6, m1);
     Sphere snow3 = Sphere(Point3(-4, 0.4, 4), 0.4, m1);
 
-    Sphere snowZoi1 = Sphere(Point3(-4.005, 0.45, 4), 0.1, m2);
-    Cone snowNose = Cone(Point3(-4, 0.4, 4.8), Vector3(0, 0, 1), 0.5, 0.1, m3);
+    //Sphere snowZoi1 = Sphere(Point3(-4.005, 0.44, 4.41), 0.03, m2);
+    //Sphere snowZoi2 = Sphere(Point3(-3.990, 0.44, 4.41), 0.05, m2);
+    Cone snowNose = Cone(Point3(-4, 0.4, 4.8), Vector3(0, 0, 1), 0.5, 0.1, orange);
+
+
+    //poste
+    Cylinder poste = Cylinder(Point3(2.5, -2, 6), 0.05, 4.5, Vector3(0, 1, 0), m1);
+    Cylinder haste = Cylinder(Point3(2.5, 2.5, 6), 0.03, 0.3, Vector3(0, 0, 1), m1);
+    Cone cupula = Cone(Point3(2.5, 2.5, 6.3), Vector3(0, 1, 0), 0.1, 0.15, m1);
+    Sphere lamp = Sphere(Point3(2.5, 2.40, 6.3), 0.04, yellow);
+
+   //poste rotacionado
+    Cylinder poste1 = Cylinder(Point3(-2.5, -2, -3), 0.05, 4.5, Vector3(0, 1, 0), m1);
+    Cylinder haste1 = Cylinder(Point3(-2.5, 2.5, -3), 0.03, 0.3, Vector3(0, 0, 1), m1);
+    Vector3 v_dir = Vector3(2.5, 0, 3);
+    haste1.translate(v_dir);
+    Vector3 eixo_y = Vector3(0,1,0);
+    haste1.rotate(eixo_y, 1.57);
+    Vector3 v_dir2 = Vector3(-2.5, 0, -3);
+    Cone cupula2 = Cone(Point3(2.5, 2.5, 6.3), Vector3(0, 1, 0), 0.1, 0.15, m1);
+    Sphere lamp1 = Sphere(Point3(2.5, 2.40, 6.3), 0.04, yellow);
 
 
 
@@ -181,10 +216,18 @@ void render() {
     objects.push_back(&snow1);
     objects.push_back(&snow2);
     objects.push_back(&snow3);
-    objects.push_back(&snowZoi1);
+    //objects.push_back(&snowZoi1);
     objects.push_back(&snowNose);
+    //objects.push_back(&snowZoi2);
+    objects.push_back(&tronco2);
+    objects.push_back(&copa21);
+    objects.push_back(&copa22);
     // objects.push_back(&yAx);
     // objects.push_back(&zAx);
+    objects.push_back(&poste);
+    objects.push_back(&haste);
+    objects.push_back(&cupula);
+    objects.push_back(&lamp);
     objects.push_back(&plane);
     objects.push_back(&casaParede);
     objects.push_back(&casaFrente);
@@ -194,6 +237,14 @@ void render() {
     objects.push_back(&janela2);
     objects.push_back(&telhadoEsquerda);
     objects.push_back(&telhadoDireita);
+    objects.push_back(&telhadoCima);
+    objects.push_back(&parede2);
+    objects.push_back(&porta2);
+    objects.push_back(&telhado2);
+    objects.push_back(&t1);
+    objects.push_back(&t2);
+    objects.push_back(&poste1);
+    objects.push_back(&haste1);
 
 
     int o = objects.size();

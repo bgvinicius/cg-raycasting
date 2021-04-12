@@ -38,4 +38,8 @@ class Sphere: public Object {
         Vector3 normalAt(Point3 &point) {
             return unit_vector(point - center);
         };
+
+        void toCamera(Matrix4 &toCamera) {
+            this->center = this->center * toCamera;
+        }
 };

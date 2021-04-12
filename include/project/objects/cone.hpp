@@ -11,7 +11,7 @@ class Cone: public Object {
         float cos2teta;
 
         Cone(Point3 top, Vector3 direction, float height, float baseRadius, Material material): 
-            Object(material), top(top), direction(direction) {
+            Object(material), top(top), direction(unit_vector(direction)) {
             this->height = height;
             this->baseRadius = baseRadius;
             double H = height; //2.0;
@@ -89,4 +89,9 @@ class Cone: public Object {
 
             return unit_vector(N);
         };
+
+        void toCamera(Matrix4 &toCamera) {
+            this->top = toCamera * this->top;
+            this->direction = unit_vector(toCamera * this->direction);
+        }
 };

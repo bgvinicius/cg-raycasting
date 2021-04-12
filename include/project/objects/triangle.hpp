@@ -60,6 +60,12 @@ class TriangleFace: public Object {
 
             return unit_vector(N);
         };
+
+        void toCamera(Matrix4 &toCamera) {
+            this->v1 = this->v1 * toCamera;
+            this->v2 = this->v2 * toCamera;
+            this->v3 = this->v3 * toCamera;
+        }
 };
 
 #endif

@@ -6,6 +6,7 @@
 #include <vector>
 using namespace std;
 #include <assert.h>
+#include "../matrix4.hpp"
 
 class Light {
     public:
@@ -91,6 +92,10 @@ class PointLight: public Light {
             Vector3 hitToLight = unit_vector(position - p);
 
             return genericLightContribution(n, v, hitToLight, *this, material);
+        }
+
+        void toCamera(Matrix4 &toCamera) {
+            this->position = this->position * toCamera;
         }
 };
 

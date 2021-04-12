@@ -105,28 +105,11 @@ Component getColor(vector<Light*> &lights, Vector3 &hitPointToObserver, Point3 &
 }
 
 void render(vector<TriangleFace> &triangles) {
-    Point3 eye = Point3(0, 0, 0);
-    Point3 at = Point3(0, 0, -1);
-    Point3 up = Point3(0, 1, -1);
+    Point3 eye = Point3(0, 0, 5);
+    Point3 at = Point3(0, 0, 0);
+    Point3 up = Point3(0, 1, 0);
 
-    Camera c = Camera(eye, at, up);
-
-    //vector<TriangleFace> newFaces = {};
-
-    // for (int i =0; i < tr.size(); i++) {
-    //     TriangleFace f = tr[i];
-
-    //     TriangleFace f2 = TriangleFace();
-
-    //     f2.v1 = c.worldToCamera * f.v1;
-    //     f2.v2 = c.worldToCamera * f.v2;
-    //     f2.v3 = c.worldToCamera * f.v3;
-    //     f2.rgb.x = f.rgb.x;
-    //     f2.rgb.y = f.rgb.y;
-    //     f2.rgb.z = f.rgb.z;
-
-    //     newFaces.push_back(f2);
-    // }
+    Camera camera = Camera(eye, at, up);
 
     eye = Point3(0, 0, 0);
 
@@ -150,7 +133,7 @@ void render(vector<TriangleFace> &triangles) {
     Material m1 = Material(reflectionFromRGB(255, 255, 255), reflectionFromRGB(100, 100, 100), reflectionFromRGB(100, 100, 100), 2.0);
     Material m2 = Material(reflectionFromRGB(255, 255, 255), reflectionFromRGB(230, 100, 233), reflectionFromRGB(80, 70, 200), 3.0);
     Material m3 = Material(reflectionFromRGB(255, 255, 255), reflectionFromRGB(230, 20, 40), reflectionFromRGB(100, 90, 230), 3.0);
-    Material m4 = Material(reflectionFromRGB(255, 255, 255), reflectionFromRGB(230, 230, 230), reflectionFromRGB(230, 230, 230), 3.0);
+    Material m4 = Material(reflectionFromRGB(255, 255, 255), reflectionFromRGB(100, 78, 230), reflectionFromRGB(230, 230, 230), 2.5);
 
     Material planeFloor = Material(reflectionFromRGB(70, 46, 26), reflectionFromRGB(70, 46, 26), reflectionFromRGB(70, 46, 26), 1.0);
 
@@ -160,25 +143,31 @@ void render(vector<TriangleFace> &triangles) {
     Sphere esf4 = Sphere(Point3(4.0, 1.5, -7), 3, m2);
     Cylinder cil1 = Cylinder(Point3(-2, 0, -3.0), 1.0f, 1.0f, Vector3(0, 1, 0), m3);
     Cone cone1 = Cone(Point3(0, -3, -3.0), Vector3(0, 1.0, 0), 2.0, 1.0, m2);
-    MeshObject mesh = makeCube(2, 4, -5.0, -3.0, -3.0, -5.0);
-    mesh.setMaterial(m1);
+    MeshObject mesh = makeCube(-2, 2, -2.0, 2.0, 2.0, -2.0, m4, m3, m1, m2);
+    // mesh.setMaterial(m4);
     Plane plane = Plane(Point3(0, -7, 0), Vector3(0, 1, 0), planeFloor);
 
+    Cylinder xAx = Cylinder(Point3(0, 0, 0), 0.02, 10, Vector3(1, 0, 0), m3);
+    Cylinder yAx = Cylinder(Point3(0, 0, 0), 0.02, 10, Vector3(0, 1, 0), m3);
+    Cylinder zAx = Cylinder(Point3(0, 0, 0), 0.02, 10, Vector3(0, 0, 1), m3);
 
     Vector3 trVector = Vector3(4, 4, -5);
     //Vector3 goBack = trVector.reverse();
-    Vector3 X_AXIS = Vector3(0, 0, 1);
+    // Vector3 X_AXIS = Vector3(0, 0, 1);
     mesh.meshTranslate(trVector);
-    mesh.meshRotate(X_AXIS, 1.0);
+    // mesh.meshRotate(X_AXIS, 1.0);
     // mesh.meshTranslate(goBack);
     
-    // esfs.push_back(&esf1);
-    // esfs.push_back(&esf2);
-    // esfs.push_back(&esf3);
-    // esfs.push_back(&esf4);
-    // esfs.push_back(&cil1);
-    // esfs.push_back(&cone1);
+    esfs.push_back(&esf1);
+    esfs.push_back(&esf2);
+    esfs.push_back(&esf3);
+    esfs.push_back(&esf4);
+    esfs.push_back(&cil1);
+    esfs.push_back(&cone1);
     esfs.push_back(&mesh);
+    // esfs.push_back(&xAx);
+    // esfs.push_back(&yAx);
+    // esfs.push_back(&zAx);
     // esfs.push_back(&plane);
 
     int o = esfs.size();
@@ -187,17 +176,26 @@ void render(vector<TriangleFace> &triangles) {
     AmbientLight ambientLight = AmbientLight(0.1);
 
     PointLight pointLight = PointLight(Point3(-10, 10, 10), reflectionFromRGB(255, 255, 255), reflectionFromRGB(255, 255, 255));
+
     vector<Light*> lights = {
         &ambientLight,
         &pointLight
     };
+
+    // ===== WORLD COORDINATES TO CAMERA COORDINATES TRANSFORMATION =======
+
+    pointLight.toCamera(camera.worldToCamera);
+
+    for (int i = 0; i < esfs.size(); i++) {
+        esfs[i]->toCamera(camera.worldToCamera);
+    }
 
     for (int h = height, i = 0; h >= 0; h--, i++) {
         for (int w = 0; w < width; w++) {
             // w anda dentro duma linha, i passa linha de cima pra baixo
             float x_pos = x_min + (delt_x / 2.0) + (w * delt_x);
             float y_pos = y_max - (delt_y / 2.0) - (i * delt_y);
-            float z_pos = -1;
+            float z_pos = -2;
 
             // raio saindo da camera (eye) indo ate o centro do pixel no canvas
             //Vector3 direction(x_pos, y_pos, z_pos);

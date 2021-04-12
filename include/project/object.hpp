@@ -5,6 +5,7 @@
 #include "interception.hpp"
 #include "./lights/material.hpp"
 #include <stdexcept>
+#include "./matrix4.hpp"
 
 class Object {
     public:
@@ -28,6 +29,12 @@ class Object {
             throw std::invalid_argument(
                 "Abstract objects don't have a normal."
             );   
+        }
+
+        virtual void toCamera(Matrix4 &toCamera) {
+            throw std::invalid_argument(
+                "Abstract objects can't be transformed to camera coordinates."
+            ); 
         }
 };
 

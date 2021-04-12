@@ -8,7 +8,7 @@ class Cylinder: public Object {
         Vector3 direction;
 
         Cylinder(Point3 base, float baseRadius, float height, Vector3 direction, Material material):
-            Object(material), base(base), direction(direction) {
+            Object(material), base(base), direction(unit_vector(direction)) {
             this->baseRadius = baseRadius;
             this->height = height;
         }
@@ -77,4 +77,9 @@ class Cylinder: public Object {
 
             return N / baseRadius;
         };
+
+        void toCamera(Matrix4 &toCamera) {
+            this->base = this->base * toCamera;
+            this->direction = unit_vector(this->direction * toCamera);
+        }
 };

@@ -24,4 +24,9 @@ class Plane: public Object {
         Vector3 normalAt(Point3 &point) {
             return planeNormal;
         };
+
+        void toCamera(Matrix4 &toCamera) {
+            this->planePoint = this->planePoint * toCamera;
+            this->planeNormal = unit_vector(this->planeNormal * toCamera);
+        }
 };

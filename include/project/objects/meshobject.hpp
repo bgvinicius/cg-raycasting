@@ -93,7 +93,7 @@ class MeshObject: public Object {
         }
 }; 
 
-MeshObject makeCube(int cube_xmin, int cube_xmax, int cube_ymin, int cube_ymax, int cube_zmin, int cube_zmax, Material &m1, Material &m2, Material &m3, Material &m4) {
+MeshObject makeCube(float cube_xmin, float cube_xmax, float cube_ymin, float cube_ymax, float cube_zmin, float cube_zmax, Material &m1, Material &m2, Material &m3, Material &m4) {
     // int cube_xmin = 20;
     // int cube_xmax = 24;
     // int cube_ymin = 0;
@@ -110,5 +110,12 @@ MeshObject makeCube(int cube_xmin, int cube_xmax, int cube_ymin, int cube_ymax, 
         TriangleFace(Point3(cube_xmax, cube_ymax, cube_zmin), Point3(cube_xmax, cube_ymin, cube_zmax), Point3(cube_xmax, cube_ymax, cube_zmax), m3), // dir
         TriangleFace(Point3(cube_xmin, cube_ymin, cube_zmax), Point3(cube_xmax, cube_ymin, cube_zmax), Point3(cube_xmin, cube_ymax, cube_zmax), m4), // tras
         TriangleFace(Point3(cube_xmin, cube_ymax, cube_zmax), Point3(cube_xmax, cube_ymin, cube_zmax), Point3(cube_xmax, cube_ymax, cube_zmax), m4), // tras
+    });
+}
+
+MeshObject makeRet(float ret_xmin, float ret_xmax, float ret_ymin, float ret_ymax, float ret_zmin, Material &m){
+    return MeshObject({
+        TriangleFace(Point3(ret_xmin, ret_ymin, ret_zmin), Point3(ret_xmax, ret_ymin, ret_zmin), Point3(ret_xmin, ret_ymax, ret_zmin), m),
+        TriangleFace(Point3(ret_xmax, ret_ymin, ret_zmin), Point3(ret_xmax, ret_ymax, ret_zmin), Point3(ret_xmin, ret_ymax, ret_zmin), m),
     });
 }

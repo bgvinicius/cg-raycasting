@@ -1,17 +1,17 @@
 #include <iostream>
-#include "project/vector3.hpp"
-#include "project/objects/sphere.hpp"
-#include "project/objects/cylinder.hpp"
-#include "project/objects/cone.hpp"
+#include "../include/project/vector3.hpp"
+#include "../include/project/objects/sphere.hpp"
+#include "../include/project/objects/cylinder.hpp"
+#include "../include/project/objects/cone.hpp"
 #include <vector>
 #include <math.h>
-#include "project/camera.hpp"
-#include "project/object.hpp"
-#include "project/objects/triangle.hpp"
-#include "project/objects/meshobject.hpp"
-#include "project/objects/plane.hpp"
-#include "project/lights/material.hpp"
-#include "project/lights/light.hpp"
+#include "../include/project/camera.hpp"
+#include "../include/project/object.hpp"
+#include "../include/project/objects/triangle.hpp"
+#include "../include/project/objects/meshobject.hpp"
+#include "../include/project/objects/plane.hpp"
+#include "../include/project/lights/material.hpp"
+#include "../include/project/lights/light.hpp"
 
 using namespace std;
 
@@ -102,15 +102,52 @@ void render() {
 
     Material planeFloor = Material(reflectionFromRGB(70, 46, 26), reflectionFromRGB(70, 46, 26), reflectionFromRGB(70, 46, 26), 1.0);
 
-    Sphere esf1 = Sphere(Point3(0.0, 0.0, -1.0), 0.5, m1);
-    Sphere esf2 = Sphere(Point3(1.0, 0.0, -1.5), 0.5, m2);
-    Sphere esf3 = Sphere(Point3(2.0, 1.5, -2.5), 1, m3);
-    Sphere esf4 = Sphere(Point3(4.0, 1.5, -7), 3, m2);
-    Cylinder cil1 = Cylinder(Point3(-2, 0, -3.0), 1.0f, 1.0f, Vector3(0, 1, -1.0), m3);
-    Cone cone1 = Cone(Point3(0, -3, -3.0), Vector3(0, 1.0, -1.0), 2.0, 1.0, m2);
-    MeshObject mesh = makeCube(-2, 2, -2.0, 2.0, 2.0, -2.0, m4, m3, m1, m2);
+    //Sphere esf1 = Sphere(Point3(0.0, 0.0, -1.0), 0.5, m1);
+    //Sphere esf2 = Sphere(Point3(1.0, 0.0, -1.5), 0.5, m2);
+    //Sphere esf3 = Sphere(Point3(2.0, 1.5, -2.5), 1, m3);
+    //Sphere esf4 = Sphere(Point3(4.0, 1.5, -7), 3, m2);
+    //Cylinder cil1 = Cylinder(Point3(-2, 0, -3.0), 1.0f, 1.0f, Vector3(0, 1, -1.0), m3);
+    //Cone cone1 = Cone(Point3(0, -3, -3.0), Vector3(0, 1.0, -1.0), 2.0, 1.0, m2);
+    //MeshObject mesh = makeCube(-2, 2, -2.0, 2.0, 2.0, -2.0, m4, m3, m1, m2);
     // mesh.setMaterial(m4);
+
+
+
     Plane plane = Plane(Point3(0, -7, 0), Vector3(0, 1, 0), planeFloor);
+
+    //casa
+    MeshObject casaParede = makeCube(-2, 2, -2.0, 2.0, 2.0, -2.0, m4, m3, m1, m2);
+    TriangleFace casaFrente = TriangleFace(Point3(-2, 2, 2), Point3(2,2,2), Point3(0,3,2), m4);
+    TriangleFace casaTras = TriangleFace(Point3(-2, 2, -2), Point3(2,2,-2), Point3(0,3,-2), m4);
+    MeshObject porta = makeRet(-0.5, 0.5, -2, 0, 2.000001, m3);
+    MeshObject janela1 = makeRet(-1.5, -1, -0.5, 0.5, 2.000001, m3);
+    MeshObject janela2 = makeRet(1, 1.5, -0.5, 0.5, 2.000001, m3);
+    MeshObject telhadoEsquerda = makeCube(-2.35, -2, 2.0, 3.0, 2.15, -2.15, m3, m3, m3, m3);
+    MeshObject telhadoDireita = makeCube(2, 2.35, 2.0, 3.0, 2.15, -2.15, m3, m3, m3, m3);
+    Vector3 dir = Vector3(0,-2,0);
+    telhadoDireita.meshTranslate(dir);
+    telhadoEsquerda.meshTranslate(dir);
+    Vector3 zAxis = Vector3(0,0,1);
+    Vector3 xAxis = Vector3(1,0,0);
+    telhadoEsquerda.meshShear(zAxis, xAxis, 2);
+    telhadoDireita.meshShear(zAxis, xAxis, -2);
+    Vector3 dir2 = Vector3(0,2,0);
+    telhadoEsquerda.meshTranslate(dir2);
+    telhadoDireita.meshTranslate(dir2);
+    //arvore
+    Cylinder tronco1 = Cylinder(Point3(4, -2, 4), 0.2, 3, Vector3(0, 1, 0), m1);
+    Cone copa11 = Cone(Point3(4, 3, 4), Vector3(0, 1, 0), 3.0, 1.0, m2);
+    Cone copa12 = Cone(Point3(4, 4, 4), Vector3(0, 1, 0), 3.0, 1.0, m2);
+
+    //snowman
+    Sphere snow1 = Sphere(Point3(-4, -2, 4), 0.8, m1);
+    Sphere snow2 = Sphere(Point3(-4, -0.6, 4), 0.6, m1);
+    Sphere snow3 = Sphere(Point3(-4, 0.4, 4), 0.4, m1);
+
+    Sphere snowZoi1 = Sphere(Point3(-4.005, 0.45, 4), 0.1, m2);
+    Cone snowNose = Cone(Point3(-4, 0.4, 4.8), Vector3(0, 0, 1), 0.5, 0.1, m3);
+
+
 
     Cylinder xAx = Cylinder(Point3(0, 0, 0), 0.02, 10, Vector3(1, 0, 0), m3);
     Cylinder yAx = Cylinder(Point3(0, 0, 0), 0.02, 10, Vector3(0, 1, 0), m3);
@@ -120,9 +157,9 @@ void render() {
     //Vector3 goBack = trVector.reverse();
     Vector3 XZ_AXIS = Vector3(0, 0, 1);
 
-    mesh.meshTranslate(trVector);
-    trVector = Vector3(1, 0, 0);
-    mesh.meshShear(XZ_AXIS, trVector, 1);
+    //mesh.meshTranslate(trVector);
+    //trVector = Vector3(1, 0, 0);
+    //mesh.meshShear(XZ_AXIS, trVector, 1);
 
     // mesh.meshScale(trVector, mesh.mesh[0].v1);
     // mesh.meshRotate(X_AXIS, 1.0);
@@ -135,13 +172,29 @@ void render() {
     // objects.push_back(&esf2);
     // objects.push_back(&esf3);
     // objects.push_back(&esf4);
-    objects.push_back(&cil1);
-    objects.push_back(&cone1);
-    objects.push_back(&mesh);
-    // objects.push_back(&xAx);
+    //objects.push_back(&cil1);
+    //objects.push_back(&cone1);
+    //objects.push_back(&mesh);
+    objects.push_back(&tronco1);
+    objects.push_back(&copa11);
+    objects.push_back(&copa12);
+    objects.push_back(&snow1);
+    objects.push_back(&snow2);
+    objects.push_back(&snow3);
+    objects.push_back(&snowZoi1);
+    objects.push_back(&snowNose);
     // objects.push_back(&yAx);
     // objects.push_back(&zAx);
     objects.push_back(&plane);
+    objects.push_back(&casaParede);
+    objects.push_back(&casaFrente);
+    objects.push_back(&casaTras);
+    objects.push_back(&porta);
+    objects.push_back(&janela1);
+    objects.push_back(&janela2);
+    objects.push_back(&telhadoEsquerda);
+    objects.push_back(&telhadoDireita);
+
 
     int o = objects.size();
 

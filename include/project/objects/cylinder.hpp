@@ -1,5 +1,6 @@
 #include "../object.hpp"
 #include "../transform.hpp"
+#include "./plane.hpp"
 
 class Cylinder: public Object {
     public:
@@ -7,14 +8,27 @@ class Cylinder: public Object {
         float height;
         Point3 base;
         Vector3 direction;
+        CircularPlane basePlane;
+        CircularPlane topPlane;
 
         Cylinder(Point3 base, float baseRadius, float height, Vector3 direction, Material material):
             Object(material), base(base), direction(unit_vector(direction)) {
             this->baseRadius = baseRadius;
             this->height = height;
+            computePlanes();
+        }
+
+        void computePlanes() {
+            this->basePlane = CircularPlane(this->base, direction.reverse(), baseRadius, this->material);
+
+            Vector3 top = Vector3(base.x, base.y, base.z) + (direction * height);
+            this->topPlane = CircularPlane(Point3(top.x, top.y, top.z), direction, baseRadius, this->material);
         }
 
         void intercepts(Ray &ray, InterceptionInfo &info) {
+            basePlane.intercepts(ray, info);
+            topPlane.intercepts(ray, info);
+
             // cylinder base point
             Point3 B = base;
 
@@ -82,6 +96,7 @@ class Cylinder: public Object {
         void toCamera(Matrix4 &toCamera) {
             this->base = this->base * toCamera;
             this->direction = unit_vector(this->direction * toCamera);
+            computePlanes();
         }
 
         void uniformScale(Vector3 &scale, Point3 &ancor) {
@@ -91,13 +106,17 @@ class Cylinder: public Object {
             this->height *= factor;
 
             this->base = scalePoint(scale, this->base, ancor);
+            computePlanes();
         }
 
         void rotate(Vector3 &axis, float teta) {
             this->base = rotationPoint(axis, this->base, teta);
+            computePlanes();
+
         }
 
         void translate(Vector3 &dir) {
             this->base = translatePoint(dir, this->base);
+            computePlanes();
         }
 };

@@ -70,7 +70,7 @@ Component getColor(vector<Light*> &lights, Vector3 &hitPointToObserver, Point3 &
 }
 
 void render() {
-    Point3 eye = Point3(0, 0, 5);
+    Point3 eye = Point3(0, 0, 8);
     Point3 at = Point3(0, 0, 0);
     Point3 up = Point3(0, 1, 0);
 
@@ -106,8 +106,8 @@ void render() {
     Sphere esf2 = Sphere(Point3(1.0, 0.0, -1.5), 0.5, m2);
     Sphere esf3 = Sphere(Point3(2.0, 1.5, -2.5), 1, m3);
     Sphere esf4 = Sphere(Point3(4.0, 1.5, -7), 3, m2);
-    Cylinder cil1 = Cylinder(Point3(-2, 0, -3.0), 1.0f, 1.0f, Vector3(0, 1, 0), m3);
-    Cone cone1 = Cone(Point3(0, -3, -3.0), Vector3(0, 1.0, 0), 2.0, 1.0, m2);
+    Cylinder cil1 = Cylinder(Point3(-2, 0, -3.0), 1.0f, 1.0f, Vector3(0, 1, -1.0), m3);
+    Cone cone1 = Cone(Point3(0, -3, -3.0), Vector3(0, 1.0, -1.0), 2.0, 1.0, m2);
     MeshObject mesh = makeCube(-2, 2, -2.0, 2.0, 2.0, -2.0, m4, m3, m1, m2);
     // mesh.setMaterial(m4);
     Plane plane = Plane(Point3(0, -7, 0), Vector3(0, 1, 0), planeFloor);
@@ -128,13 +128,13 @@ void render() {
     // mesh.meshRotate(X_AXIS, 1.0);
     // mesh.meshTranslate(goBack);
 
-    trVector = Vector3(-1, -1, 2);
-    esf1.translate(trVector);
+    // trVector = Vector3(1, 0, 0);
+    // cone1.rotate(trVector, 5);
     
-    objects.push_back(&esf1);
-    objects.push_back(&esf2);
-    objects.push_back(&esf3);
-    objects.push_back(&esf4);
+    // objects.push_back(&esf1);
+    // objects.push_back(&esf2);
+    // objects.push_back(&esf3);
+    // objects.push_back(&esf4);
     objects.push_back(&cil1);
     objects.push_back(&cone1);
     objects.push_back(&mesh);

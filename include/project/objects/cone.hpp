@@ -1,5 +1,6 @@
 #include "../object.hpp"
 #include "../transform.hpp"
+#include "./plane.hpp"
 
 class Cone: public Object {
     public:
@@ -10,12 +11,22 @@ class Cone: public Object {
         float baseRadius;
         float costeta;
         float cos2teta;
+        CircularPlane basePlane;
 
         Cone(Point3 top, Vector3 direction, float height, float baseRadius, Material material): 
             Object(material), top(top), direction(unit_vector(direction)) {
             this->height = height;
             this->baseRadius = baseRadius;
             precompute();
+            calculateBasePlane();
+        }
+
+        void calculateBasePlane() {
+            Vector3 aux2 = Vector3(top.x, top.y, top.z); 
+            std::cerr << aux2;
+            Vector3 aux = Vector3(top.x, top.y, top.z) + direction.reverse()*height;
+            std::cerr << aux;
+            this->basePlane = CircularPlane(Point3(aux.x, aux.y, aux.z), direction.reverse(), baseRadius, this->material);
         }
 
         void precompute() {
@@ -27,6 +38,8 @@ class Cone: public Object {
         }
 
         void intercepts(Ray &ray, InterceptionInfo &info) {
+            basePlane.intercepts(ray, info);
+
             // cone top point
             Point3 V = top; 
             Vector3 n = direction; //unit_vector(Vector3(0.0, 1.0, 0));
@@ -98,6 +111,7 @@ class Cone: public Object {
         void toCamera(Matrix4 &toCamera) {
             this->top = toCamera * this->top;
             this->direction = unit_vector(toCamera * this->direction);
+            calculateBasePlane();
         }
 
         void uniformScale(Vector3 &scale, Point3 &ancor) {
@@ -109,13 +123,17 @@ class Cone: public Object {
             this->top = scalePoint(scale, this->top, ancor);
 
             precompute();
+            calculateBasePlane();
         }
 
         void rotate(Vector3 &axis, float teta) {
             this->top = rotationPoint(axis, this->top, teta);
+            this->direction = rotationVector(axis, this->direction, teta);
+            calculateBasePlane();
         }
 
         void translate(Vector3 &dir) {
             this->top = translatePoint(dir, this->top);
+            calculateBasePlane();
         }
 };
